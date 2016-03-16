@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChristianGuitarHero2 - Copy.CSharp.Plugins", "ChristianGuitarHero2 - Copy.CSharp.Plugins.csproj", "{A2A21DDA-7E60-2E1D-B5D1-E13CDE89791B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChristianGuitarHero2 - Copy.CSharp", "ChristianGuitarHero2 - Copy.CSharp.csproj", "{1327C906-51A4-887F-7072-3E33CF8DF1B8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChristianGuitarHero2 - Copy.CSharp.Editor", "ChristianGuitarHero2 - Copy.CSharp.Editor.csproj", "{27D5A760-813B-6DEE-43AD-0F9D8126CE44}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A2A21DDA-7E60-2E1D-B5D1-E13CDE89791B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2A21DDA-7E60-2E1D-B5D1-E13CDE89791B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2A21DDA-7E60-2E1D-B5D1-E13CDE89791B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2A21DDA-7E60-2E1D-B5D1-E13CDE89791B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1327C906-51A4-887F-7072-3E33CF8DF1B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1327C906-51A4-887F-7072-3E33CF8DF1B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1327C906-51A4-887F-7072-3E33CF8DF1B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1327C906-51A4-887F-7072-3E33CF8DF1B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27D5A760-813B-6DEE-43AD-0F9D8126CE44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27D5A760-813B-6DEE-43AD-0F9D8126CE44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27D5A760-813B-6DEE-43AD-0F9D8126CE44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27D5A760-813B-6DEE-43AD-0F9D8126CE44}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

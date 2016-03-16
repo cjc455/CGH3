@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChristianGuitarHero2.CSharp.Plugins", "ChristianGuitarHero2.CSharp.Plugins.csproj", "{90929F43-3ABB-5577-A8BD-1DD8BEA51460}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChristianGuitarHero2.CSharp", "ChristianGuitarHero2.CSharp.csproj", "{DEEB1907-432E-D39F-BA7D-BABFA2CD6F64}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChristianGuitarHero2.CSharp.Editor", "ChristianGuitarHero2.CSharp.Editor.csproj", "{636B8BFD-0610-A142-1D66-085205190563}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{90929F43-3ABB-5577-A8BD-1DD8BEA51460}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90929F43-3ABB-5577-A8BD-1DD8BEA51460}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90929F43-3ABB-5577-A8BD-1DD8BEA51460}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90929F43-3ABB-5577-A8BD-1DD8BEA51460}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEEB1907-432E-D39F-BA7D-BABFA2CD6F64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEEB1907-432E-D39F-BA7D-BABFA2CD6F64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEEB1907-432E-D39F-BA7D-BABFA2CD6F64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEEB1907-432E-D39F-BA7D-BABFA2CD6F64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{636B8BFD-0610-A142-1D66-085205190563}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{636B8BFD-0610-A142-1D66-085205190563}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{636B8BFD-0610-A142-1D66-085205190563}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{636B8BFD-0610-A142-1D66-085205190563}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
