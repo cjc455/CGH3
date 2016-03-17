@@ -14,8 +14,8 @@ namespace Song
         float noteTime = .5f;
         [SerializeField]
         float noteClickRange = .5f;
-        [SerializeField]
-        float noteFailZRange = 2f;
+     //   [SerializeField]
+     //   float noteFailZRange = 2f;
         [SerializeField]
         float noteFailScoreChange = -1;
         [SerializeField]
@@ -23,17 +23,20 @@ namespace Song
         [SerializeField]
         float noteTransparencyFadeTime = 2;
 
+        AudioSource audioSource;
+
         private Song currentSong;
         Song songType;
         public float GetNoteTime(){ return noteTime; }
         public float GetNoteClickRange() { return noteClickRange;}
-        public float GetNoteFailZRange() { return noteFailZRange; }
+
         public float GetNoteFailScoreChange() { return noteFailScoreChange; }
         public float GetNoteClickScoreChange() { return noteClickScoreChange; }
         public float GetNoteTransparenctFadeTime() { return noteTransparencyFadeTime; }
         // Use this for initialization
         void Start()
         {
+            audioSource = GetComponent<AudioSource>();
             GameStateController gameStateController = MonoSingleton.GetSingleton("GameState").GetComponent<GameStateController>();
             GameState playing = gameStateController.GetGameState("Playing");
             gameStateController.AddGameStateMessage(playing, GameStateEventMessage.Start, CreateSongObject);
@@ -76,6 +79,20 @@ namespace Song
 
             currentSong = Instantiate(songType);
             currentSong.StartSong();
+            PlaySong();
+
+        }
+        void PlaySong()
+        {
+            audioSource.Play();
+        }
+        void PauseSong()
+        {
+            audioSource.Pause();
+        }
+        void StopSong()
+        {
+            audioSource.Stop();
         }
         void DestroySongObject()
         {

@@ -28,6 +28,12 @@ namespace Song
             this.trail = trail;
             this.song = song;
             UpdateNote(0);
+
+            if(noteEntry.length > 0)
+            {
+                GameObject connector = Instantiate(trail.longNoteConnectorObject);
+                GameObject endPoint = Instantiate(trail.longNoteEndObject);
+            }
         }
         void Update()
         {
@@ -80,7 +86,7 @@ namespace Song
         }
         private bool OutOfSongBounds()
         {
-            if (transform.position.z <= trail.end.position.z - songController.GetNoteFailZRange())
+            if (transform.position.z + songController.GetNoteClickRange() <= trail.end.position.z)
             {
                 return true;
             }

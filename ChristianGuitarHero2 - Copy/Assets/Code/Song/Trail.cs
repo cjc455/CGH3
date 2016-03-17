@@ -8,7 +8,10 @@ namespace Song
         public Transform start;
         public Transform end;
         public GameObject noteObject;
+        public GameObject longNoteEndObject;
+        public GameObject longNoteConnectorObject;
         public KeyCode keyCode;
+        
 
         // Use this for initialization
         void Start()

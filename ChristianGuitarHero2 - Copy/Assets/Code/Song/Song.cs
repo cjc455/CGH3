@@ -16,11 +16,18 @@ namespace Song
         //public float duration;
         public int trailIndex;
         public GameObject gameObject;
+        public float length = 0;
 
         public NoteEntry(float startTime, int trailIndex)
         {
             this.startTime = startTime;
             this.trailIndex = trailIndex;
+        }
+
+        public NoteEntry(float startTime, int trailIndex, float length) : this(startTime, trailIndex)
+        {
+            this.length = length;
+            
         }
     }
     public class Song : MonoBehaviour {
@@ -36,6 +43,9 @@ namespace Song
 
         [SerializeField]
         int uiOrder;
+
+        [SerializeField]
+        AudioClip songClip;
 
         const float noteTransparencyFadeTime = 3f;
         public string GetName() { return songName; }
@@ -82,6 +92,7 @@ namespace Song
             for(int i = 0; i < 400; i++)
             {
                 n.Add(new NoteEntry(i * .5f + 2f, i % 3));
+                n.Add(new NoteEntry(i * .5f + 2f, i % 3, ((i % 5) * .75f)));
             }
             
             return n;
@@ -131,6 +142,9 @@ namespace Song
             Debug.Log("Start song");
             nextNoteEntry = noteEntries[0];
             songStartTime = Time.time;
+
+            AudioSource audioSource = songController.GetComponent<AudioSource>();
+            audioSource.clip = songClip;
         }
         public void StopSong()
         {
