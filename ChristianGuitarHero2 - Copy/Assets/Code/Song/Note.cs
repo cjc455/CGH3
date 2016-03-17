@@ -7,49 +7,89 @@ namespace Song
     {
         NoteEntry noteEntry;
         Trail trail;
-        public void InitializeNote(NoteEntry noteEntry, Trail trail)
+        static SongController songController;
+        static GameVariables gameVars;
+        Song song;
+        void Start()
         {
+            if(songController == null)
+            {
+                songController = MonoSingleton.GetSingleton("Song").GetComponent<SongController>();
+            }
+            if (gameVars == null)
+            {
+                gameVars = MonoSingleton.GetSingleton("GameVariables").GetComponent<GameVariables>();
+            }
+        }
+        public void InitializeNote(NoteEntry noteEntry, Trail trail, Song song)
+        {
+           
             this.noteEntry = noteEntry;
             this.trail = trail;
+            this.song = song;
+            UpdateNote(0);
         }
         void Update()
         {
+            float timeInSong = song.GetTimeInSong();
+            UpdateNote(timeInSong);
 
         }
-        private bool OutOfSongBounds(NoteEntry note)
+        private void UpdateNote(float timeInSong)
         {
-            if (note == null)
+
+            if(trail == null) { return;  }
+            //set position
+            Vector3 newPos =
+                   trail.start.position
+                   + Vector3.Normalize(trail.end.position - trail.start.position)
+                   * (timeInSong - noteEntry.startTime)
+                   * (Vector3.Distance(trail.start.position, trail.end.position))
+                   / (songController.GetNoteTime());
+
+            transform.position = newPos;
+
+            //set transparency
+            float transparency = Vector3.Distance(newPos, trail.start.position) / songController.GetNoteTransparenctFadeTime();
+            transparency = Mathf.Clamp(transparency, 0f, 1f);
+            Color color = GetComponent<Renderer>().material.color;
+            color.a = transparency;
+            GetComponent<Renderer>().material.color = color;
+            //Debug.Log("trans " + transparency);
+
+            if (Input.GetKeyDown(trail.keyCode) && InClickBounds())
             {
-                Debug.LogError("NoteEntry null");
-                return false;
+                DestroyNote(true);
             }
-            if (note.gameObject == null)
+            else if (OutOfSongBounds())
             {
-                Debug.LogError("note.gameObject is null");
-                return false;
+                DestroyNote(false);
             }
-            if (
-                note.gameObject.transform.position.z <=
-                trail.end.position.z - noteFailZRange)
+        }
+        private void DestroyNote(bool clickedSuccess)
+        {
+            if(clickedSuccess)
+            {
+                gameVars.UpdateScore(songController.GetNoteClickScoreChange());
+            }
+            else
+            {
+                gameVars.UpdateScore(songController.GetNoteFailScoreChange());
+            }
+            Destroy(gameObject);
+        }
+        private bool OutOfSongBounds()
+        {
+            if (transform.position.z <= trail.end.position.z - songController.GetNoteFailZRange())
             {
                 return true;
             }
             return false;
         }
-        private bool InClickBounds(NoteEntry note)
+        private bool InClickBounds()
         {
-            if (note == null)
-            {
-                Debug.LogError("NoteEntry null");
-                return false;
-            }
-            if (note.gameObject == null)
-            {
-                Debug.LogError("note.gameObject is null");
-                return false;
-            }
-            if (note.gameObject.transform.position.z + noteClickRange >= trails[note.trailIndex].end.position.z &&
-                note.gameObject.transform.position.z - noteClickRange <= trails[note.trailIndex].end.position.z)
+            if (transform.position.z + songController.GetNoteClickRange() >= trail.end.position.z &&
+                transform.position.z - songController.GetNoteClickRange() <= trail.end.position.z)
             {
                 return true;
             }

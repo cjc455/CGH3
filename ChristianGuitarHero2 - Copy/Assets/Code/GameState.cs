@@ -94,7 +94,7 @@ public class GameState : MonoBehaviour {
             {
                 gameStateEvent();
             }
-            Debug.Log("Called " + gameStateEvent + " " + name);
+           // Debug.Log("Called " + gameStateEvent + " " + name);
         }
 
     }

@@ -8,10 +8,29 @@ namespace Song
     public class SongController : MonoBehaviour
     {
         public Trail[] noteTrails;
+        
         public Song[] songs;
+        [SerializeField]
+        float noteTime = .5f;
+        [SerializeField]
+        float noteClickRange = .5f;
+        [SerializeField]
+        float noteFailZRange = 2f;
+        [SerializeField]
+        float noteFailScoreChange = -1;
+        [SerializeField]
+        float noteClickScoreChange = 1;
+        [SerializeField]
+        float noteTransparencyFadeTime = 2;
 
         private Song currentSong;
         Song songType;
+        public float GetNoteTime(){ return noteTime; }
+        public float GetNoteClickRange() { return noteClickRange;}
+        public float GetNoteFailZRange() { return noteFailZRange; }
+        public float GetNoteFailScoreChange() { return noteFailScoreChange; }
+        public float GetNoteClickScoreChange() { return noteClickScoreChange; }
+        public float GetNoteTransparenctFadeTime() { return noteTransparencyFadeTime; }
         // Use this for initialization
         void Start()
         {
@@ -62,7 +81,7 @@ namespace Song
         {
 
             
-            Debug.Log("Destroy");
+          //  Debug.Log("Destroy");
             if(currentSong != null)
             {
                 currentSong.StopSong();

@@ -42,11 +42,10 @@ namespace Song
         public int GetUIOrder() { return uiOrder;  }
         public SongDifficulty GetDifficulty() { return songDifficulty;  }
         public string GetArtist() { return songArtist;  }
-
+        public float GetTimeInSong() { return Time.time - songStartTime; }
         List<NoteEntry> noteEntries;
         //Next note that will be instansiated
         NoteEntry nextNoteEntry;
-
         //Only keep track of instansiated notes . . .
         //less complex than storing all the notes
         //No "activate/deactivate", keeping track of what is instansiated and whats not, etc.
@@ -57,19 +56,7 @@ namespace Song
         GameVariables gameVars;
         SongController songController;
 
-        const float noteTime = .5f;
-        const float noteClickRange = .5f;
-        const float noteFailZRange = 2f;
-        const float noteFailScoreChange = -1;
-        const float noteClickScoreChange = 1;
-        // Use this for initialization
-        void Start() {
-            
-            
-
-            
-
-        }
+       
         private GameObject InstansiateNote(NoteEntry noteEntry)
         {
             GameObject newNoteGameObject = Instantiate(trails[noteEntry.trailIndex].noteObject);
@@ -78,15 +65,17 @@ namespace Song
 
             noteEntry.gameObject = newNoteGameObject;
             noteEntry.gameObject.transform.parent = transform;
-            Debug.Log("Note Created");
+            Note newNote = noteEntry.gameObject.AddComponent<Note>();
+            newNote.InitializeNote(noteEntry, trails[noteEntry.trailIndex], this);
+
+            if(noteEntry == null)
+            {
+                Debug.LogError("Note Entry is null.");
+            }
+          //  Debug.Log("Note Created");
             return newNoteGameObject;
         }
-        private void DestroyNote(NoteEntry noteEntry, float scoreChange)
-        {
-            Destroy(noteEntries[0].gameObject);
-            gameVars.UpdateScore(scoreChange);
-            noteEntries.Remove(noteEntries[0]);
-        }
+
         private List<NoteEntry> GetSong1NoteEntries()
         {
             List<NoteEntry> n = new List<NoteEntry>();
@@ -104,25 +93,17 @@ namespace Song
         }
         public void UpdateSong()
         {
-            //Is it time to add a new note?
-            float timeInSong = Time.time - songStartTime;
 
            // Debug.Log("Update Song");
             if (nextNoteEntry == null) { Debug.Log("Null"); }
            // else { Debug.Log(nextNoteEntry.startTime.ToString()); }
             
             
-            while(nextNoteEntry != null && nextNoteEntry.startTime <= timeInSong) 
+            while(nextNoteEntry != null && nextNoteEntry.startTime <= GetTimeInSong()) 
             {
                 
                 GameObject newNoteObject = InstansiateNote(nextNoteEntry);
                
-                if(!newNoteObject.GetComponent<Note>())
-                {
-                    newNoteObject.AddComponent<Note>();
-                }
-                newNoteObject.GetComponent<Note>().InitializeNote(nextNoteEntry, trails[nextNoteEntry.trailIndex]);
-
                 if(noteEntries.Count > 0 && GetNextNoteEntryIndex() + 1 < noteEntries.Count)
                 {
                     nextNoteEntry = noteEntries[GetNextNoteEntryIndex() + 1];
@@ -134,57 +115,7 @@ namespace Song
                 }
 
             }
-            
-            
-
-            //Update note positions
-
-            //Sloppy way of doing it . . . but too much effort required to fix
-           
-            for(int i = 0; i < GetNumberOfInstansiatedNotes(); i++)
-            {
-                //set position
-                Vector3 newPos = 
-                    trails[noteEntries[i].trailIndex].start.position 
-                    + Vector3.Normalize(trails[noteEntries[i].trailIndex].end.position - trails[noteEntries[i].trailIndex].start.position)
-                    * (timeInSong - noteEntries[i].startTime) 
-                    * (Vector3.Distance(trails[noteEntries[i].trailIndex].start.position, trails[noteEntries[i].trailIndex].end.position)) 
-                    / (noteTime);
-
-                noteEntries[i].gameObject.transform.position = newPos;
-
-                
-
-                //set transparency
-                float transparency = Vector3.Distance(newPos, trails[noteEntries[i].trailIndex].start.position) / noteTransparencyFadeTime;
-                transparency = Mathf.Clamp(transparency, 0f, 1f);
-                Color color = noteEntries[i].gameObject.GetComponent<Renderer>().material.color;
-                color.a = transparency;
-                noteEntries[i].gameObject.GetComponent<Renderer>().material.color = color;
-                Debug.Log("trans " + transparency);
-
-            }
-            
-            //Any notes clicked?
-            //slight inefficiency, but really insignificant performance change
-            for(int i = 0; i < trails.Length; i++)
-            {
-                
-                if (Input.GetKeyDown(trails[i].keyCode))
-                {
-                    //this works
-                    // Debug.Log(trails[i].keyCode.ToString());
-                    int len = GetNumberOfInstansiatedNotes();
-                    for (int j = 0; j < len; j++)
-                    {
-                        if(noteEntries[j].trailIndex == i && InClickBounds(noteEntries[j])) {
-                            DestroyNote(noteEntries[j], noteClickScoreChange);
-                            len -= 1;
-                            Debug.Log("NOte Clicked");
-                        }
-                    }
-                }
-            }
+ 
 
             //Any notes failed?
         }
@@ -209,6 +140,7 @@ namespace Song
         {
 
         }
+        /*
         private int GetNumberOfInstansiatedNotes()
         {
             int len = 0;
@@ -217,7 +149,7 @@ namespace Song
 
             return len;
         }
-        
+        */
     }
     
 }

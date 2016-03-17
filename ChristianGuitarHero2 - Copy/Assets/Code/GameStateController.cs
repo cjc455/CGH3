@@ -41,7 +41,7 @@ public class GameStateController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         activeGameState.SendMessageToGameStateEvents(GameStateEventMessage.Update);
-        Debug.Log(GetActiveGameState().GetName());
+       // Debug.Log(GetActiveGameState().GetName());
         foreach(GameState state in gameStates)
         {
             if(state != activeGameState)
