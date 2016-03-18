@@ -4,7 +4,12 @@ using System.Collections.Generic;
 
 public class MonoSingleton
 {
+    Dictionary<GameObject, string> singletons;
     
+    private void Initialize()
+    {
+        singletons = new Dictionary<GameObject, string>();
+    }
     public static GameObject GetSingleton(string singletonName)
     {
         return GameObject.Find(singletonName);

@@ -10,25 +10,133 @@ namespace Song
         Medium,
         Hard
     }
+    public class SlideNotePoint
+    {
+
+    }
     public class NoteEntry
     {
+        public enum NoteType { Regular, Transition, Long, Slide, Shake }
         public float startTime;
         //public float duration;
         public int trailIndex;
         public GameObject gameObject;
+        public NoteEntry parentNote;
         public float length = 0;
+        private NoteType noteType;
+        static SongController songController;
+        public NoteType GetNoteType() { return noteType; }
+        public SlideNotePoint[] GetSlideNotePoints() { return slideNotePoints; }
 
-        public NoteEntry(float startTime, int trailIndex)
+        //Doesn't work, can only create new notes with the gameObject.add function
+        //Component noteComponent
+
+        SlideNotePoint[] slideNotePoints = null;
+
+        private NoteEntry(float startTime, NoteType noteType)
         {
             this.startTime = startTime;
-            this.trailIndex = trailIndex;
+            this.noteType = noteType;
+        }
+        private static SongController GetSongController()
+        {
+            if(!songController)
+            {
+                songController = MonoSingleton.GetSingleton("Song").GetComponent<SongController>();
+            }
+            return songController;
+        }
+        public static NoteEntry Regular(float startTime, int trailIndex)
+        {
+            NoteEntry newNoteEntry = new NoteEntry(startTime, NoteType.Regular);
+            newNoteEntry.trailIndex = trailIndex;
+            newNoteEntry.noteType = NoteType.Regular;
+            return newNoteEntry;
+        }
+        public static NoteEntry[] Long(float startTime, int trailIndex, float length)
+        {
+            float entriesPerDistance = 5;
+            int numberOfEntries = (int)((length * entriesPerDistance) + 1);
+            NoteEntry[] newNoteEntries = new NoteEntry[numberOfEntries];
+
+            //First create long note
+            NoteEntry newNoteEntry = new NoteEntry(startTime, NoteType.Long);
+            newNoteEntry.length = length;
+            newNoteEntry.trailIndex = trailIndex;
+            newNoteEntry.noteType = NoteType.Long;
+            newNoteEntries[0] = newNoteEntry;
+
+            //now create transition notes
+            for(int i = 1; i < newNoteEntries.Length; i++)
+            {
+                float transitionNoteStartTime = startTime + i * (length) / numberOfEntries;
+                newNoteEntries[i] = Transition(transitionNoteStartTime, trailIndex, newNoteEntries[i - 1]);
+
+            }
+
+            return newNoteEntries;
+        }
+        public static NoteEntry Transition(float startTime, int trailIndex, NoteEntry parentNote)
+        {
+            NoteEntry newNoteEntry = new NoteEntry(startTime, NoteType.Transition);
+            newNoteEntry.trailIndex = trailIndex;
+            newNoteEntry.noteType = NoteType.Transition;
+            newNoteEntry.parentNote = parentNote;
+            return newNoteEntry;
+
+        }
+        public static NoteEntry Slide(float startTime, SlideNotePoint[] points)
+        {
+            NoteEntry newNoteEntry = new NoteEntry(startTime, NoteType.Slide);
+            newNoteEntry.slideNotePoints = points;
+            newNoteEntry.noteType = NoteType.Slide;
+            return newNoteEntry;
         }
 
-        public NoteEntry(float startTime, int trailIndex, float length) : this(startTime, trailIndex)
+        /*
+        All data for the note is created in one of the above methods
+        This method just instansiates it. Not much need for data setting/manipulation
+        */
+        public void InstansiateNote()
         {
-            this.length = length;
             
+            
+            //newNote.InitializeNote(this, songController.noteTrails[trailIndex], this);
+
+            switch (noteType)
+            {
+                case NoteType.Regular:
+                    gameObject = Object.Instantiate(GetSongController().noteTrails[trailIndex].noteObject);
+                    gameObject.AddComponent<RegularNote>();
+                    gameObject.transform.parent = GetSongController().transform;
+                    break;
+                case NoteType.Long:
+                    gameObject = Object.Instantiate(GetSongController().noteTrails[trailIndex].longNoteEndObject);
+                    gameObject.AddComponent<LongNote>();
+                    gameObject.transform.parent = GetSongController().transform;
+                    break;
+                case NoteType.Transition:
+                    if(parentNote == null) { return; }
+                    gameObject = Object.Instantiate(GetSongController().transitionNote);
+                    gameObject.AddComponent<TransitionNote>();
+                    gameObject.transform.parent = parentNote.gameObject.transform;
+                    break;
+                case NoteType.Slide:
+                    //  gameObject.AddComponent<SlideNote>();
+                    break;
+            }
+
+            gameObject.name = noteType.ToString();
+            gameObject.transform.position = GetSongController().noteTrails[trailIndex].start.position;
+
+            Note newNote = gameObject.AddComponent<Note>();
+            newNote.SetNoteEntry(this);
+            //  Debug.Log("Note Created");
+
+
         }
+        
+
     }
     public class Song : MonoBehaviour {
 
@@ -46,6 +154,8 @@ namespace Song
 
         [SerializeField]
         AudioClip songClip;
+
+        
 
         const float noteTransparencyFadeTime = 3f;
         public string GetName() { return songName; }
@@ -67,32 +177,17 @@ namespace Song
         SongController songController;
 
        
-        private GameObject InstansiateNote(NoteEntry noteEntry)
-        {
-            GameObject newNoteGameObject = Instantiate(trails[noteEntry.trailIndex].noteObject);
-
-            newNoteGameObject.transform.position = trails[noteEntry.trailIndex].start.position;
-
-            noteEntry.gameObject = newNoteGameObject;
-            noteEntry.gameObject.transform.parent = transform;
-            Note newNote = noteEntry.gameObject.AddComponent<Note>();
-            newNote.InitializeNote(noteEntry, trails[noteEntry.trailIndex], this);
-
-            if(noteEntry == null)
-            {
-                Debug.LogError("Note Entry is null.");
-            }
-          //  Debug.Log("Note Created");
-            return newNoteGameObject;
-        }
+       
 
         private List<NoteEntry> GetSong1NoteEntries()
         {
             List<NoteEntry> n = new List<NoteEntry>();
             for(int i = 0; i < 400; i++)
             {
-                n.Add(new NoteEntry(i * .5f + 2f, i % 3));
-                n.Add(new NoteEntry(i * .5f + 2f, i % 3, ((i % 5) * .75f)));
+               // n.Add(NoteEntry.Regular(i * .1f + 2f, 0));
+                n.AddRange(NoteEntry.Long(i * 2f,  i % 3, 1));
+                
+              //  n.Add(new NoteEntry(i * .5f + 2f, i % 3, ((i % 5) * .75f)));
             }
             
             return n;
@@ -112,8 +207,8 @@ namespace Song
             
             while(nextNoteEntry != null && nextNoteEntry.startTime <= GetTimeInSong()) 
             {
-                
-                GameObject newNoteObject = InstansiateNote(nextNoteEntry);
+
+                nextNoteEntry.InstansiateNote();
                
                 if(noteEntries.Count > 0 && GetNextNoteEntryIndex() + 1 < noteEntries.Count)
                 {

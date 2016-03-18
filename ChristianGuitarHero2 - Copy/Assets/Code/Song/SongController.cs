@@ -8,7 +8,7 @@ namespace Song
     public class SongController : MonoBehaviour
     {
         public Trail[] noteTrails;
-        
+        public GameObject transitionNote;
         public Song[] songs;
         [SerializeField]
         float noteTime = .5f;
@@ -48,6 +48,7 @@ namespace Song
             
             
         }
+
         private void UpdateSong()
         {
 
@@ -79,6 +80,7 @@ namespace Song
 
             currentSong = Instantiate(songType);
             currentSong.StartSong();
+            currentSong.name = "Playing Song";
             PlaySong();
 
         }

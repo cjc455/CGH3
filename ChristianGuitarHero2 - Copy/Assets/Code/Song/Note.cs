@@ -9,7 +9,7 @@ namespace Song
         Trail trail;
         static SongController songController;
         static GameVariables gameVars;
-        Song song;
+        static Song song;
         void Start()
         {
             if(songController == null)
@@ -20,30 +20,27 @@ namespace Song
             {
                 gameVars = MonoSingleton.GetSingleton("GameVariables").GetComponent<GameVariables>();
             }
-        }
-        public void InitializeNote(NoteEntry noteEntry, Trail trail, Song song)
-        {
-           
-            this.noteEntry = noteEntry;
-            this.trail = trail;
-            this.song = song;
-            UpdateNote(0);
-
-            if(noteEntry.length > 0)
+            if(song == null)
             {
-                GameObject connector = Instantiate(trail.longNoteConnectorObject);
-                GameObject endPoint = Instantiate(trail.longNoteEndObject);
+                song = MonoSingleton.GetSingleton("Playing Song").GetComponent<Song>();
             }
+            trail = songController.noteTrails[noteEntry.trailIndex];
+            UpdateNote(0);
+        }
+        public void SetNoteEntry(NoteEntry noteEntry)
+        {
+            this.noteEntry = noteEntry;
         }
         void Update()
         {
             float timeInSong = song.GetTimeInSong();
+           // Debug.Log(timeInSong);
             UpdateNote(timeInSong);
 
         }
         private void UpdateNote(float timeInSong)
         {
-
+            
             if(trail == null) { return;  }
             //set position
             Vector3 newPos =

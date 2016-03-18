@@ -101,6 +101,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Code\Curver.cs" />
+    <Compile Include="Assets\Code\CurverTest.cs" />
     <Compile Include="Assets\Code\DestroyOnGameStateChange.cs" />
     <Compile Include="Assets\Code\GameState.cs" />
     <Compile Include="Assets\Code\GameStateController.cs" />
@@ -109,15 +111,27 @@
     <Compile Include="Assets\Code\MonoSingleton.cs" />
     <Compile Include="Assets\Code\PlayingScoreUI.cs" />
     <Compile Include="Assets\Code\SetActiveOnGameStateChange.cs" />
+    <Compile Include="Assets\Code\Song\LongNote.cs" />
     <Compile Include="Assets\Code\Song\Note.cs" />
+    <Compile Include="Assets\Code\Song\RegularNote.cs" />
     <Compile Include="Assets\Code\Song\Song.cs" />
     <Compile Include="Assets\Code\Song\SongButton.cs" />
     <Compile Include="Assets\Code\Song\SongController.cs" />
     <Compile Include="Assets\Code\Song\Trail.cs" />
+    <Compile Include="Assets\Code\Song\TransitionNote.cs" />
     <Compile Include="Assets\Code\SongListUI.cs" />
     <Compile Include="Assets\GemExample\Scripts\DemoTimeOfDay.cs" />
     <Compile Include="Assets\GemExample\Scripts\Orbit.cs" />
     <Compile Include="Assets\Purchaser.cs" />
+    <Compile Include="Assets\VolumetricLines\ExampleScenes\ExampleScripts\CannonBehavior.cs" />
+    <Compile Include="Assets\VolumetricLines\ExampleScenes\ExampleScripts\CreateSinShapedLineStrip.cs" />
+    <Compile Include="Assets\VolumetricLines\ExampleScenes\ExampleScripts\ShotBehavior.cs" />
+    <Compile Include="Assets\VolumetricLines\Scripts\SetFovGlobalShaderVariable.cs" />
+    <Compile Include="Assets\VolumetricLines\Scripts\Utils\ExposePropertyAttribute.cs" />
+    <Compile Include="Assets\VolumetricLines\Scripts\Utils\TransformExtensionMethods.cs" />
+    <Compile Include="Assets\VolumetricLines\Scripts\VolumetricLineBehavior.cs" />
+    <Compile Include="Assets\VolumetricLines\Scripts\VolumetricLineStripBehavior.cs" />
+    <Compile Include="Assets\VolumetricLines\Scripts\VolumetricMultiLineBehavior.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Gem\Shaders\Gem.shader" />
@@ -201,6 +215,12 @@
     <None Include="Assets\Standard Assets\Effects\ToonShading\Shaders\ToonLit.shader" />
     <None Include="Assets\Standard Assets\Effects\ToonShading\Shaders\ToonLitOutline.shader" />
     <None Include="Assets\Standard Assets\Fonts\OpenSans\License!.txt" />
+    <None Include="Assets\VolumetricLines\Shaders\VolumetricLineShaderAdditive.shader" />
+    <None Include="Assets\VolumetricLines\Shaders\VolumetricLineShaderAdditiveFast.shader" />
+    <None Include="Assets\VolumetricLines\Shaders\VolumetricLineShaderAlphaBlended.shader" />
+    <None Include="Assets\VolumetricLines\Shaders\VolumetricLineShaderAlphaBlendedFast.shader" />
+    <None Include="Assets\VolumetricLines\Shaders\VolumetricLineStripShaderAdditive.shader" />
+    <None Include="Assets\VolumetricLines\Shaders\VolumetricLineStripShaderAlphaBlended.shader" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
