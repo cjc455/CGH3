@@ -20,7 +20,7 @@ public class Curver : MonoBehaviour
         pointsLength = arrayToCurve.Length;
 
         curvedLength = (pointsLength * Mathf.RoundToInt(smoothness)) - 1;
-        curvedPoints = new List<Vector3>(curvedLength);
+        curvedPoints = new List<Vector3>();
 
         float t = 0.0f;
         for (int pointInTimeOnCurve = 0; pointInTimeOnCurve < curvedLength + 1; pointInTimeOnCurve++)

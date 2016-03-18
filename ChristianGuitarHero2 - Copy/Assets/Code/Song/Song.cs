@@ -55,7 +55,7 @@ namespace Song
         }
         public static NoteEntry[] Long(float startTime, int trailIndex, float length)
         {
-            float entriesPerDistance = 5;
+            float entriesPerDistance = 15;
             int numberOfEntries = (int)((length * entriesPerDistance) + 1);
             NoteEntry[] newNoteEntries = new NoteEntry[numberOfEntries];
 
@@ -70,7 +70,7 @@ namespace Song
             for(int i = 1; i < newNoteEntries.Length; i++)
             {
                 float transitionNoteStartTime = startTime + i * (length) / numberOfEntries;
-                newNoteEntries[i] = Transition(transitionNoteStartTime, trailIndex, newNoteEntries[i - 1]);
+                newNoteEntries[i] = Transition(transitionNoteStartTime, trailIndex, newNoteEntries[0]);
 
             }
 
@@ -116,10 +116,11 @@ namespace Song
                     gameObject.transform.parent = GetSongController().transform;
                     break;
                 case NoteType.Transition:
-                    if(parentNote == null) { return; }
+                    if(parentNote == null || parentNote.gameObject == null) { return; }
                     gameObject = Object.Instantiate(GetSongController().transitionNote);
                     gameObject.AddComponent<TransitionNote>();
                     gameObject.transform.parent = parentNote.gameObject.transform;
+                    gameObject.transform.eulerAngles = new Vector3(30, 0, 0);
                     break;
                 case NoteType.Slide:
                     //  gameObject.AddComponent<SlideNote>();
@@ -128,7 +129,7 @@ namespace Song
 
             gameObject.name = noteType.ToString();
             gameObject.transform.position = GetSongController().noteTrails[trailIndex].start.position;
-
+            
             Note newNote = gameObject.AddComponent<Note>();
             newNote.SetNoteEntry(this);
             //  Debug.Log("Note Created");

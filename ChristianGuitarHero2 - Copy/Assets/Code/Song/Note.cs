@@ -27,9 +27,17 @@ namespace Song
             trail = songController.noteTrails[noteEntry.trailIndex];
             UpdateNote(0);
         }
+        public Trail GetTrail()
+        {
+            return trail;
+        }
         public void SetNoteEntry(NoteEntry noteEntry)
         {
             this.noteEntry = noteEntry;
+        }
+        public NoteEntry GetNoteEntry()
+        {
+            return noteEntry;
         }
         void Update()
         {
@@ -60,8 +68,11 @@ namespace Song
             GetComponent<Renderer>().material.color = color;
             //Debug.Log("trans " + transparency);
 
+            //if children notes > 0, then
+
             if (Input.GetKeyDown(trail.keyCode) && InClickBounds())
             {
+                
                 DestroyNote(true);
             }
             else if (OutOfSongBounds())
@@ -74,6 +85,7 @@ namespace Song
             if(clickedSuccess)
             {
                 gameVars.UpdateScore(songController.GetNoteClickScoreChange());
+                Instantiate(songController.clickSFX, trail.end.position, Quaternion.identity);
             }
             else
             {

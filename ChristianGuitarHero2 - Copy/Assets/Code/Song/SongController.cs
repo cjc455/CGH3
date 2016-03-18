@@ -10,6 +10,7 @@ namespace Song
         public Trail[] noteTrails;
         public GameObject transitionNote;
         public Song[] songs;
+        public GameObject clickSFX;
         [SerializeField]
         float noteTime = .5f;
         [SerializeField]

@@ -9,7 +9,17 @@ public class GameVariables : MonoBehaviour {
     public bool debugMode = true;
 
     private float score;
+    int noteStreak;
 
+    public void UpdateScoreNoteClick()
+    {
+        noteStreak += 1;
+       
+    }
+    public void UpdateScoreNoteFail()
+    {
+        noteStreak = 0;
+    }
     public void UpdateScore(float valueAdd)
     {
         score += valueAdd;
