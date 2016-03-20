@@ -10,6 +10,8 @@ namespace Song
         public GameObject noteObject;
         public GameObject longNoteEndObject;
         public GameObject longNoteConnectorObject;
+        public GameObject noteClickSFX;
+       // public GameObject transitionNoteClickSFX;
         public KeyCode keyCode;
         
 

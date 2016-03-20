@@ -113,6 +113,7 @@
     <Compile Include="Assets\Code\PlayingScoreUI.cs" />
     <Compile Include="Assets\Code\SetActiveOnGameStateChange.cs" />
     <Compile Include="Assets\Code\Song\LongNote.cs" />
+    <Compile Include="Assets\Code\Song\LongNoteController.cs" />
     <Compile Include="Assets\Code\Song\Note.cs" />
     <Compile Include="Assets\Code\Song\RegularNote.cs" />
     <Compile Include="Assets\Code\Song\Song.cs" />

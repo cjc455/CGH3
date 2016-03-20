@@ -10,7 +10,6 @@ namespace Song
         public Trail[] noteTrails;
         public GameObject transitionNote;
         public Song[] songs;
-        public GameObject clickSFX;
         [SerializeField]
         float noteTime = .5f;
         [SerializeField]
@@ -42,6 +41,7 @@ namespace Song
             GameState playing = gameStateController.GetGameState("Playing");
             gameStateController.AddGameStateMessage(playing, GameStateEventMessage.Start, CreateSongObject);
             gameStateController.AddGameStateMessage(playing, GameStateEventMessage.Update, UpdateSong);
+            gameStateController.AddGameStateMessage(playing, GameStateEventMessage.Exit, EndSong);
             GameState mainMenu = gameStateController.GetGameState("Main Menu");
             gameStateController.AddGameStateMessage(mainMenu, GameStateEventMessage.Start, DestroySongObject);
 
@@ -49,7 +49,10 @@ namespace Song
             
             
         }
+        private void EndSong()
+        {
 
+        }
         private void UpdateSong()
         {
 

@@ -41,12 +41,16 @@ namespace Song
         }
         void Update()
         {
-            float timeInSong = song.GetTimeInSong();
+           // float timeInSong = song.GetTimeInSong();
            // Debug.Log(timeInSong);
-            UpdateNote(timeInSong);
+           // UpdateNote(timeInSong);
 
         }
-        private void UpdateNote(float timeInSong)
+        public void UpdateNote()
+        {
+            UpdateNote(song.GetTimeInSong());
+        }
+        public void UpdateNote(float timeInSong)
         {
             
             if(trail == null) { return;  }
@@ -70,30 +74,22 @@ namespace Song
 
             //if children notes > 0, then
 
-            if (Input.GetKeyDown(trail.keyCode) && InClickBounds())
-            {
-                
-                DestroyNote(true);
-            }
-            else if (OutOfSongBounds())
-            {
-                DestroyNote(false);
-            }
+            
         }
-        private void DestroyNote(bool clickedSuccess)
+        public void DestroyNote(bool clickedSuccess)
         {
             if(clickedSuccess)
             {
-                gameVars.UpdateScore(songController.GetNoteClickScoreChange());
-                Instantiate(songController.clickSFX, trail.end.position, Quaternion.identity);
+               // gameVars.UpdateScore(songController.GetNoteClickScoreChange());
+                Instantiate(trail.noteClickSFX, trail.end.position, Quaternion.identity);
             }
             else
             {
-                gameVars.UpdateScore(songController.GetNoteFailScoreChange());
+               // gameVars.UpdateScore(songController.GetNoteFailScoreChange());
             }
             Destroy(gameObject);
         }
-        private bool OutOfSongBounds()
+        public bool OutOfSongBounds()
         {
             if (transform.position.z + songController.GetNoteClickRange() <= trail.end.position.z)
             {
@@ -101,7 +97,7 @@ namespace Song
             }
             return false;
         }
-        private bool InClickBounds()
+        public bool InTrailClickBounds()
         {
             if (transform.position.z + songController.GetNoteClickRange() >= trail.end.position.z &&
                 transform.position.z - songController.GetNoteClickRange() <= trail.end.position.z)
@@ -110,5 +106,19 @@ namespace Song
             }
             return false;
         }
+        public bool InSlideInputBoundsXY()
+        {
+            return true;
+        }
+        public bool InSlideInputBoundsZ()
+        {
+            
+            if(transform.position.z <= trail.end.position.z)
+            {
+                return true;
+            }
+            return false;
+        }
+        
     }
 }

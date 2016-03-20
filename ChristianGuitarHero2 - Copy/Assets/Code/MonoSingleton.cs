@@ -4,31 +4,49 @@ using System.Collections.Generic;
 
 public class MonoSingleton
 {
-    Dictionary<GameObject, string> singletons;
+    static Dictionary<string, GameObject> singletons = null;
     
-    private void Initialize()
+    static private void Initialize()
     {
-        singletons = new Dictionary<GameObject, string>();
+        singletons = new Dictionary<string, GameObject>();
     }
     public static GameObject GetSingleton(string singletonName)
     {
-        return GameObject.Find(singletonName);
+        if(singletons == null)
+        {
+            Initialize();
+        }
+        GameObject testObject;
+        singletons.TryGetValue(singletonName, out testObject);
+        if(testObject == null)
+        {
+            testObject = GameObject.Find(singletonName);
+            singletons.Add(singletonName, testObject);
+        }
+        return testObject;
     }
     public static bool DestroySingleton(string singletonName)
     {
-        GameObject obj = GameObject.Find(singletonName);
-        if(obj)
+        if (singletons == null)
         {
-            Object.Destroy(obj);
-            return true;
+            Initialize();
         }
-        return false;
+        GameObject testObject;
+        singletons.TryGetValue(singletonName, out testObject);
+        if (testObject == null)
+        {
+            return false;
+        }
+        Object.Destroy(testObject);
+        return true;
     }
+    /*
     public static GameObject InstansiateSingleton(string newSingletonName)
     {
         GameObject newObj = new GameObject();
         newObj.name = newSingletonName;
         return newObj;
     }
+    */
     
 }

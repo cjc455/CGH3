@@ -27,6 +27,7 @@ namespace Song
         static SongController songController;
         public NoteType GetNoteType() { return noteType; }
         public SlideNotePoint[] GetSlideNotePoints() { return slideNotePoints; }
+      //  public List<TransitionNote> transitionNotes;
 
         //Doesn't work, can only create new notes with the gameObject.add function
         //Component noteComponent
@@ -66,12 +67,14 @@ namespace Song
             newNoteEntry.noteType = NoteType.Long;
             newNoteEntries[0] = newNoteEntry;
 
+          //  newNoteEntry.transitionNotes = new List<TransitionNote>();
+
             //now create transition notes
             for(int i = 1; i < newNoteEntries.Length; i++)
             {
                 float transitionNoteStartTime = startTime + i * (length) / numberOfEntries;
                 newNoteEntries[i] = Transition(transitionNoteStartTime, trailIndex, newNoteEntries[0]);
-
+               // newNoteEntry.transitionNotes.Add(newNoteEntries[i]);
             }
 
             return newNoteEntries;
@@ -120,6 +123,7 @@ namespace Song
                     gameObject = Object.Instantiate(GetSongController().transitionNote);
                     gameObject.AddComponent<TransitionNote>();
                     gameObject.transform.parent = parentNote.gameObject.transform;
+                   // gameObject.transform.parent = GetSongController().transform;
                     gameObject.transform.eulerAngles = new Vector3(30, 0, 0);
                     break;
                 case NoteType.Slide:
@@ -185,7 +189,7 @@ namespace Song
             List<NoteEntry> n = new List<NoteEntry>();
             for(int i = 0; i < 400; i++)
             {
-               // n.Add(NoteEntry.Regular(i * .1f + 2f, 0));
+               // n.Add(NoteEntry.Regular(i * .1f + 2f, i % 3));
                 n.AddRange(NoteEntry.Long(i * 2f,  i % 3, 1));
                 
               //  n.Add(new NoteEntry(i * .5f + 2f, i % 3, ((i % 5) * .75f)));
