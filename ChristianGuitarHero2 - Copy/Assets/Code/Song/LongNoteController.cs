@@ -7,13 +7,21 @@ namespace Song {
 
         Note longNote;
         bool isClicking = false;
-        
+
         // Use this for initialization
         void Start() {
             name = "LongNote Controller";
         }
 
-        // Update is called once per frame
+        // Update is called once per 
+
+        void SetSlideRotation(Transform target, int i)
+        {
+            GetTransitionNotes()[i].transform.LookAt(target);
+            Vector3 angles = GetTransitionNotes()[i].transform.eulerAngles;
+            angles.x -= 90;
+            GetTransitionNotes()[i].transform.eulerAngles = angles;
+        }
         void Update() {
             if(longNote == null)
             {
@@ -22,6 +30,18 @@ namespace Song {
             foreach (TransitionNote tn in GetTransitionNotes())
             {
                 tn.GetComponent<Note>().UpdateNote();
+                
+            }
+            if (longNote.GetNoteEntry().GetNoteType() == NoteEntry.NoteType.Slide)
+            {
+                if (GetTransitionNotes().Length > 0)
+                {
+                    SetSlideRotation(longNote.transform, 0);
+                    for (int i = 1; i < GetTransitionNotes().Length; i++)
+                    {
+                        SetSlideRotation(GetTransitionNotes()[i - 1].transform, i);
+                    }
+                }
             }
             if (!isClicking)
             {

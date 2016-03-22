@@ -46,8 +46,20 @@ namespace Song
            // UpdateNote(timeInSong);
 
         }
-        public void UpdateNoteSlideTransition()
+        public Vector3 GetSlideNotePosition()
         {
+            Vector3 direction = Vector3.zero;
+            if(noteEntry.slidePosition > 0 && noteEntry.slidePosition <= 1)
+            {
+                direction =  songController.noteTrails[1].end.position - songController.noteTrails[0].end.position;
+            }
+            else if (noteEntry.slidePosition > 1 && noteEntry.slidePosition <= 2)
+            {
+                direction = songController.noteTrails[2].end.position - songController.noteTrails[1].end.position ;
+            }
+           // Debug.Log(direction);
+            return direction * noteEntry.slidePosition;
+            
 
         }
         public void UpdateNote()
@@ -66,9 +78,11 @@ namespace Song
                    * (Vector3.Distance(trail.start.position, trail.end.position))
                    / (songController.GetNoteTime());
 
-           
-            newPos.x += songController.GetComponent<AudioSource>().lis;
-            Debug.Log(songController.GetComponent<AudioSource>().pitch);
+            if((noteEntry.parentNote != null && noteEntry.parentNote.GetNoteType() == NoteEntry.NoteType.Slide) || noteEntry.GetNoteType() == NoteEntry.NoteType.Slide)
+            {
+                newPos += GetSlideNotePosition();
+
+            }
             transform.position = newPos;
             //set transparency
             float transparency = Vector3.Distance(newPos, trail.start.position) / songController.GetNoteTransparenctFadeTime();
@@ -87,7 +101,7 @@ namespace Song
             if(clickedSuccess)
             {
                // gameVars.UpdateScore(songController.GetNoteClickScoreChange());
-                Instantiate(trail.noteClickSFX, trail.end.position, Quaternion.identity);
+                Instantiate(trail.noteClickSFX, transform.position, Quaternion.identity);
             }
             else
             {
@@ -126,7 +140,7 @@ namespace Song
             Vector2 noteInScreen = Camera.main.WorldToScreenPoint(transform.position);
 
                // Debug.Log("Note " + noteInScreen.ToString());
-            if (Vector2.Distance(noteInScreen, input) < 20)
+            if (Vector2.Distance(noteInScreen, input) < 100)
             {
                 return true;
                 Debug.Log("Mouse " + input.ToString() + "  Note " + noteInScreen.ToString() + "  Dist " + Vector2.Distance(noteInScreen, input));

@@ -119,27 +119,35 @@ namespace Song
             }
 
             float length = points[points.Length - 1].GetTime() - points[0].GetTime();
-            float entriesPerDistance = 15;
-            int numberOfEntries = (int)((length * entriesPerDistance) + 1);
-            NoteEntry[] newNoteEntries = new NoteEntry[numberOfEntries];
+          
+           
 
             //First create long note
             NoteEntry newNoteEntry = new NoteEntry(startTime, NoteType.Long);
             newNoteEntry.length = length;
             
             newNoteEntry.slidePosition = (points[0].GetPosition());
-            newNoteEntry.noteType = NoteType.Long;
+            newNoteEntry.noteType = NoteType.Slide;
+
+
+            Vector3[] positions = new Vector3[points.Length];
+            for (int i = 0; i < positions.Length; i++)
+            {
+                positions[i] = new Vector3(points[i].GetPosition(), points[i].GetTime(), 0);
+            }
+            positions = Curver.MakeSmoothCurve(positions, 3.0f);
+            int numberOfEntries = positions.Length + 1;
+            NoteEntry[] newNoteEntries = new NoteEntry[numberOfEntries];
             newNoteEntries[0] = newNoteEntry;
-
-            //  newNoteEntry.transitionNotes = new List<TransitionNote>();
-
-            //now create transition notes
+            float entriesPerDistance = 15;
             for (int i = 1; i < newNoteEntries.Length; i++)
             {
-                float transitionNoteStartTime = startTime + i * (length) / numberOfEntries;
+               // float transitionNoteStartTime = startTime + positions[i - 1].y;
+                float transitionNoteStartTime = startTime + i * (length) / entriesPerDistance;
                 newNoteEntries[i] = Transition(transitionNoteStartTime, 0, newNoteEntries[0]);
-                newNoteEntries[i].slidePosition = 0;
-                // newNoteEntry.transitionNotes.Add(newNoteEntries[i]);
+                newNoteEntries[i].slidePosition = positions[i - 1].x;
+                
+               
             }
 
             return newNoteEntries;
@@ -175,7 +183,9 @@ namespace Song
                    
                     break;
                 case NoteType.Slide:
-                    //  gameObject.AddComponent<SlideNote>();
+                    gameObject = Object.Instantiate(GetSongController().noteTrails[trailIndex].longNoteEndObject);
+                    gameObject.AddComponent<LongNote>();
+                    gameObject.transform.parent = GetSongController().transform;
                     break;
             }
 
@@ -229,16 +239,53 @@ namespace Song
         GameVariables gameVars;
         SongController songController;
 
-       
-       
 
-        private List<NoteEntry> GetSong1NoteEntries()
+        private List<NoteEntry> GetSong2NoteEntries()
         {
             List<NoteEntry> n = new List<NoteEntry>();
+            n.Add(NoteEntry.Regular(0, 2));
+            n.Add(NoteEntry.Regular(1, 1));
+            n.Add(NoteEntry.Regular(1.5f, 1));
+            n.Add(NoteEntry.Regular(3, 0));
+            n.AddRange(NoteEntry.Long(3.5f, 1, 1));
+            return n;
+        }
+        private List<NoteEntry> GetSong3NoteEntries()
+        {
+            List<NoteEntry> n = new List<NoteEntry>();
+            n.Add(NoteEntry.Regular(0, 2));
+            n.Add(NoteEntry.Regular(1, 1));
+            n.Add(NoteEntry.Regular(1.5f, 1));
+            n.Add(NoteEntry.Regular(3, 0));
+            n.AddRange(NoteEntry.Long(3.5f, 1, 1));
+            return n;
+        }
+        private List<NoteEntry> GetSong1NoteEntries()
+        {
+           
+            List<NoteEntry> n = new List<NoteEntry>();
+            float totalTime = 0;
             for(int i = 0; i < 400; i++)
             {
                // n.Add(NoteEntry.Regular(i * .1f + 2f, i % 3));
-                n.AddRange(NoteEntry.Long(i * 2f,  i % 3, 1));
+
+               if(i % 3 == 0)
+                {
+                    n.Add(NoteEntry.Regular(i * 2f, i % 3));
+                }
+               else if(i % 3 == 1)
+                {
+                    n.AddRange(NoteEntry.Long(i * 2f, i % 3, 1f));
+                }
+               else
+                {
+                    SlideNotePoint[] points = new SlideNotePoint[3];
+                    for( float j = 0; j < points.Length; j++) {
+                        points[(int)j] = new SlideNotePoint(j * 2 / points.Length, Random.Range(0f, 1f) * 2f);
+                    }
+                    n.AddRange(NoteEntry.Slide(i * 2f, points));
+                }
+                
                 
               //  n.Add(new NoteEntry(i * .5f + 2f, i % 3, ((i % 5) * .75f)));
             }
@@ -258,7 +305,7 @@ namespace Song
            // else { Debug.Log(nextNoteEntry.startTime.ToString()); }
             
             
-            while(nextNoteEntry != null && nextNoteEntry.startTime <= GetTimeInSong()) 
+            while(nextNoteEntry != null && nextNoteEntry.startTime - songController.GetNoteTime() <= GetTimeInSong()) 
             {
 
                 nextNoteEntry.InstansiateNote();
