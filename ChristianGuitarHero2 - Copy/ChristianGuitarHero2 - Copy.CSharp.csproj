@@ -116,10 +116,13 @@
     <Compile Include="Assets\Code\Song\LongNoteController.cs" />
     <Compile Include="Assets\Code\Song\Note.cs" />
     <Compile Include="Assets\Code\Song\RegularNote.cs" />
+    <Compile Include="Assets\Code\Song\SlideNote.cs" />
+    <Compile Include="Assets\Code\Song\SlideNoteController.cs" />
     <Compile Include="Assets\Code\Song\Song.cs" />
     <Compile Include="Assets\Code\Song\SongButton.cs" />
     <Compile Include="Assets\Code\Song\SongController.cs" />
     <Compile Include="Assets\Code\Song\Trail.cs" />
+    <Compile Include="Assets\Code\Song\Trails.cs" />
     <Compile Include="Assets\Code\Song\TransitionNote.cs" />
     <Compile Include="Assets\Code\SongListUI.cs" />
     <Compile Include="Assets\GemExample\Scripts\DemoTimeOfDay.cs" />

@@ -30,38 +30,44 @@ namespace Song {
                 if (longNote.OutOfSongBounds())
                 {
                     DestroyAll();
+
                 }
-                if (Input.GetKeyDown(longNote.GetTrail().keyCode) && longNote.InTrailClickBounds())
+                if(Input.GetMouseButtonDown(0) && longNote.InTouchInputBounds() && longNote.InTrailClickBounds())
                 {
                     // longNote.DestroyNote(true);
+                   
                     longNote.GetComponent<Renderer>().enabled = false;
                     isClicking = true;
                 }
-
             }
             else
             {
-                if(GetTransitionNotes().Length == 0)
+                if (GetTransitionNotes().Length <= 0)
                 {
                     DestroyAll();
+                    
+                    return;
                 }
-                else if(!Input.GetKey(longNote.GetTrail().keyCode))
+                
+                if (!Input.GetMouseButton(0))
                 {
                     DestroyAll();
+                    
+                    return;
                 }
-                else if(GetTransitionNotes()[0].GetComponent<Note>().OutOfSongBounds())
+                if(GetTransitionNotes()[0].GetComponent<Note>().AfterClickPoint())
                 {
-                    DestroyAll();
-                }
-                else if(GetTransitionNotes()[0].GetComponent<Note>().InSlideInputBoundsZ())
-                {
-                    if (GetTransitionNotes()[0].GetComponent<Note>().InSlideInputBoundsXY())
+                    if(GetTransitionNotes()[0].GetComponent<Note>().InTouchInputBounds())
                     {
+                        
                         GetTransitionNotes()[0].GetComponent<Note>().DestroyNote(true);
+                        
                     }
                     else
                     {
                         DestroyAll();
+                        
+                        return;
                     }
                 }
             }

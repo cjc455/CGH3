@@ -14,14 +14,16 @@ namespace Song
         float noteTime = .5f;
         [SerializeField]
         float noteClickRange = .5f;
-     //   [SerializeField]
-     //   float noteFailZRange = 2f;
+        [SerializeField]
+        float noteFailRange = 2f;
         [SerializeField]
         float noteFailScoreChange = -1;
         [SerializeField]
         float noteClickScoreChange = 1;
         [SerializeField]
         float noteTransparencyFadeTime = 2;
+        [SerializeField]
+        float noteYTransitionEnd = 0;
 
         AudioSource audioSource;
 
@@ -33,6 +35,8 @@ namespace Song
         public float GetNoteFailScoreChange() { return noteFailScoreChange; }
         public float GetNoteClickScoreChange() { return noteClickScoreChange; }
         public float GetNoteTransparenctFadeTime() { return noteTransparencyFadeTime; }
+        public float GetNoteFailRange() { return noteFailRange; }
+        public float GetNoteYTransitionEnd() { return noteYTransitionEnd;  }
         // Use this for initialization
         void Start()
         {
@@ -91,6 +95,7 @@ namespace Song
         void PlaySong()
         {
             audioSource.Play();
+           
         }
         void PauseSong()
         {

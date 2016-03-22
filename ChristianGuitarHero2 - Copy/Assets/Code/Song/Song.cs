@@ -12,7 +12,16 @@ namespace Song
     }
     public class SlideNotePoint
     {
+        float time;
+        float position;
 
+        public float GetTime() { return time; }
+        public float GetPosition() { return position; }
+        public SlideNotePoint(float time, float position)
+        {
+            this.time = time;
+            this.position = position;
+        }
     }
     public class NoteEntry
     {
@@ -20,6 +29,7 @@ namespace Song
         public float startTime;
         //public float duration;
         public int trailIndex;
+        public float slidePosition;
         public GameObject gameObject;
         public NoteEntry parentNote;
         public float length = 0;
@@ -88,12 +98,51 @@ namespace Song
             return newNoteEntry;
 
         }
-        public static NoteEntry Slide(float startTime, SlideNotePoint[] points)
+        /*
+        TODO: only make the notes based on the pitch in the song
+        public static NoteEntry[] Slide(float startTime, float length, float minTrailPos, float maxTrailPos)
         {
-            NoteEntry newNoteEntry = new NoteEntry(startTime, NoteType.Slide);
-            newNoteEntry.slideNotePoints = points;
-            newNoteEntry.noteType = NoteType.Slide;
-            return newNoteEntry;
+
+        }
+        */
+        public static NoteEntry[] Slide(float startTime, SlideNotePoint[] points)
+        {
+            if(points == null)
+            {
+                Debug.LogError("points is null.");
+                return null;
+            }
+            if(points.Length < 1)
+            {
+                Debug.LogError("points has length < 1. Please use a regularNote or longNote type");
+                return null;
+            }
+
+            float length = points[points.Length - 1].GetTime() - points[0].GetTime();
+            float entriesPerDistance = 15;
+            int numberOfEntries = (int)((length * entriesPerDistance) + 1);
+            NoteEntry[] newNoteEntries = new NoteEntry[numberOfEntries];
+
+            //First create long note
+            NoteEntry newNoteEntry = new NoteEntry(startTime, NoteType.Long);
+            newNoteEntry.length = length;
+            
+            newNoteEntry.slidePosition = (points[0].GetPosition());
+            newNoteEntry.noteType = NoteType.Long;
+            newNoteEntries[0] = newNoteEntry;
+
+            //  newNoteEntry.transitionNotes = new List<TransitionNote>();
+
+            //now create transition notes
+            for (int i = 1; i < newNoteEntries.Length; i++)
+            {
+                float transitionNoteStartTime = startTime + i * (length) / numberOfEntries;
+                newNoteEntries[i] = Transition(transitionNoteStartTime, 0, newNoteEntries[0]);
+                newNoteEntries[i].slidePosition = 0;
+                // newNoteEntry.transitionNotes.Add(newNoteEntries[i]);
+            }
+
+            return newNoteEntries;
         }
 
         /*
@@ -123,8 +172,7 @@ namespace Song
                     gameObject = Object.Instantiate(GetSongController().transitionNote);
                     gameObject.AddComponent<TransitionNote>();
                     gameObject.transform.parent = parentNote.gameObject.transform;
-                   // gameObject.transform.parent = GetSongController().transform;
-                    gameObject.transform.eulerAngles = new Vector3(30, 0, 0);
+                   
                     break;
                 case NoteType.Slide:
                     //  gameObject.AddComponent<SlideNote>();

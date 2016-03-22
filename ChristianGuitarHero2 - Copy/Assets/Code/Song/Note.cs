@@ -46,6 +46,10 @@ namespace Song
            // UpdateNote(timeInSong);
 
         }
+        public void UpdateNoteSlideTransition()
+        {
+
+        }
         public void UpdateNote()
         {
             UpdateNote(song.GetTimeInSong());
@@ -62,8 +66,10 @@ namespace Song
                    * (Vector3.Distance(trail.start.position, trail.end.position))
                    / (songController.GetNoteTime());
 
+           
+            newPos.x += songController.GetComponent<AudioSource>().lis;
+            Debug.Log(songController.GetComponent<AudioSource>().pitch);
             transform.position = newPos;
-
             //set transparency
             float transparency = Vector3.Distance(newPos, trail.start.position) / songController.GetNoteTransparenctFadeTime();
             transparency = Mathf.Clamp(transparency, 0f, 1f);
@@ -91,7 +97,15 @@ namespace Song
         }
         public bool OutOfSongBounds()
         {
-            if (transform.position.z + songController.GetNoteClickRange() <= trail.end.position.z)
+            if (transform.position.y  <= trail.end.position.y - songController.GetNoteFailRange())
+            {
+                return true;
+            }
+            return false;
+        }
+        public bool AfterClickPoint()
+        {
+            if (transform.position.y <= trail.end.position.y)
             {
                 return true;
             }
@@ -99,21 +113,32 @@ namespace Song
         }
         public bool InTrailClickBounds()
         {
-            if (transform.position.z + songController.GetNoteClickRange() >= trail.end.position.z &&
-                transform.position.z - songController.GetNoteClickRange() <= trail.end.position.z)
+            if (transform.position.y >= trail.end.position.y - songController.GetNoteClickRange() &&
+                transform.position.y <= trail.end.position.y + songController.GetNoteClickRange())
             {
                 return true;
             }
             return false;
         }
-        public bool InSlideInputBoundsXY()
+        public bool InTouchInputBounds()
         {
-            return true;
+            Vector2 input = Input.mousePosition;
+            Vector2 noteInScreen = Camera.main.WorldToScreenPoint(transform.position);
+
+               // Debug.Log("Note " + noteInScreen.ToString());
+            if (Vector2.Distance(noteInScreen, input) < 20)
+            {
+                return true;
+                Debug.Log("Mouse " + input.ToString() + "  Note " + noteInScreen.ToString() + "  Dist " + Vector2.Distance(noteInScreen, input));
+
+            }
+
+            return false;
         }
-        public bool InSlideInputBoundsZ()
+
+        public bool InTrailYTransitionEndBounds()
         {
-            
-            if(transform.position.z <= trail.end.position.z)
+            if(transform.position.y <= trail.end.position.y - songController.GetNoteYTransitionEnd())
             {
                 return true;
             }
