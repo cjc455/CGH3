@@ -25,7 +25,7 @@ namespace Song
     }
     public class NoteEntry
     {
-        public enum NoteType { Regular, Transition, Long, Slide, Shake }
+        public enum NoteType { Regular, Transition, Long, Slide, Shake, Empty }
         public float startTime;
         //public float duration;
         public int trailIndex;
@@ -35,6 +35,23 @@ namespace Song
         public float length = 0;
         private NoteType noteType;
         static SongController songController;
+
+        //TODO: create class NoteDecoration
+        //public NoteDecoration noteDecoration;
+
+        //NoteEntry ne = new SlideNoteEntry(time, points, noteDecoration);
+        //Won't need getters for these, the gameObjects needed by them will be accessed inside the note class
+        public Color localColor;
+        public Color globalColor;
+        public float audioLength;
+        public float audioSpeed;
+        public float cameraShake;
+        public float localTrailScale;
+        public float globalTrailScale;
+        public float blurAmmount;
+        const bool playOnClickedNotesOnly = true;
+
+
         public NoteType GetNoteType() { return noteType; }
         public SlideNotePoint[] GetSlideNotePoints() { return slideNotePoints; }
       //  public List<TransitionNote> transitionNotes;
@@ -53,7 +70,8 @@ namespace Song
         {
             if(!songController)
             {
-                songController = MonoSingleton.GetSingleton("Song").GetComponent<SongController>();
+            //    songController = MonoSingleton.GetSingleton("Song").GetComponent<SongController>();
+                songController = MSingleton.GetSingleton<SongController>();
             }
             return songController;
         }
@@ -239,7 +257,10 @@ namespace Song
         GameVariables gameVars;
         SongController songController;
 
+        void AddSongNoteEntry()
+        {
 
+        }
         private List<NoteEntry> GetSong2NoteEntries()
         {
             List<NoteEntry> n = new List<NoteEntry>();
@@ -297,6 +318,23 @@ namespace Song
             //Problem: when nextNoteEntry is null, returns 0
             return noteEntries.FindIndex(n => n == nextNoteEntry);
         }
+        /*
+        how to offset note positions to instansiate them before the song:
+        1. 
+        in class Song
+        while(nextNoteEntry != null && nextNoteEntry.startTime - songController.GetNoteTime() <= GetTimeInSong()) 
+            {
+
+        2.
+        In class Note
+        Vector3 newPos =
+                   trail.start.position
+                   + Vector3.Normalize(trail.end.position - trail.start.position)
+                   * (timeInSong - noteEntry.startTime + songController.GetNoteTime())
+                   * (Vector3.Distance(trail.start.position, trail.end.position))
+                   / (songController.GetNoteTime());
+
+        */
         public void UpdateSong()
         {
 
@@ -327,8 +365,8 @@ namespace Song
         }
         public void StartSong()
         {
-            gameVars = MonoSingleton.GetSingleton("GameVariables").GetComponent<GameVariables>();
-            songController = MonoSingleton.GetSingleton("Song").GetComponent<SongController>();
+            gameVars = MSingleton.GetSingleton<GameVariables>(); //MonoSingleton.GetSingleton("GameVariables").GetComponent<GameVariables>();
+            songController = MSingleton.GetSingleton<SongController>();// MonoSingleton.GetSingleton("Song").GetComponent<SongController>();
             trails = songController.noteTrails;
 
             //TODO: throw error if notes are not ordered by accending startTime

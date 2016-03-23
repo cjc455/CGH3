@@ -27,6 +27,9 @@ namespace Song
         [SerializeField]
         private RectTransform contentRect;
 
+        [SerializeField]
+        ScrollSnapRect snapRect;
+
         SongController songController;
         GameState playingGameState;
         GameStateController gameStateController;
@@ -34,23 +37,30 @@ namespace Song
         // Use this for initialization
         void Start()
         {
-            
-            songController = MonoSingleton.GetSingleton("Song").GetComponent<SongController>();
-            gameStateController = MonoSingleton.GetSingleton("GameState").GetComponent<GameStateController>();
+
+            //songController = MonoSingleton.GetSingleton("Song").GetComponent<SongController>();
+            songController = MSingleton.GetSingleton<SongController>();
+            //gameStateController = MonoSingleton.GetSingleton("GameState").GetComponent<GameStateController>();
+
+            gameStateController = MSingleton.GetSingleton<GameStateController>();
+
             playingGameState = gameStateController.GetGameState("Playing");
 
 
             Song[] songs = songController.songs;
             Button[] buttons = new Button[songs.Length];
 
-            contentRect.sizeDelta = new Vector2(contentRect.sizeDelta.x, songs.Length * buttonDistance);
             
             foreach (Song s in songs)
             {
                 CreateButton(s);
             }
 
-            
+            if (snapRect != null)
+                snapRect.Initialize();
+            if (contentRect != null)
+                contentRect.sizeDelta = new Vector2(contentRect.sizeDelta.x, songs.Length * buttonDistance);
+            Debug.Log(songs.Length);
         }
         private void CreateButton(Song songResource)
         {

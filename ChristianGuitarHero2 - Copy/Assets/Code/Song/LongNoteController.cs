@@ -62,6 +62,7 @@ namespace Song {
             }
             else
             {
+
                 if (GetTransitionNotes().Length <= 0)
                 {
                     DestroyAll();

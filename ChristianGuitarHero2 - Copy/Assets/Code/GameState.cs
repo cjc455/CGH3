@@ -23,8 +23,8 @@ public class GameState : MonoBehaviour {
        
         InitializeGameStateEvents();
         AddGameStateMessage(GameStateEventMessage.Start, InitializeGameState);
-        gameStateController = MonoSingleton.GetSingleton("GameState").GetComponent<GameStateController>();
-
+        //  gameStateController = MonoSingleton.GetSingleton("GameState").GetComponent<GameStateController>();
+        gameStateController = MSingleton.GetSingleton<GameStateController>();
     }
     void Update()
     {
@@ -79,7 +79,7 @@ public class GameState : MonoBehaviour {
         gameStateEvents[message].Add(gameStateEvent);
         if(gameStateController == null)
         {
-            gameStateController = MonoSingleton.GetSingleton("GameState").GetComponent<GameStateController>();
+            gameStateController = MSingleton.GetSingleton<GameStateController>();//MonoSingleton.GetSingleton("GameState").GetComponent<GameStateController>();
         }
         if(message == GameStateEventMessage.Start)
         {

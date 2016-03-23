@@ -14,15 +14,15 @@ namespace Song
         {
             if(songController == null)
             {
-                songController = MonoSingleton.GetSingleton("Song").GetComponent<SongController>();
+                songController = MSingleton.GetSingleton<SongController>();//MonoSingleton.GetSingleton("Song").GetComponent<SongController>();
             }
             if (gameVars == null)
             {
-                gameVars = MonoSingleton.GetSingleton("GameVariables").GetComponent<GameVariables>();
+                gameVars = MSingleton.GetSingleton<GameVariables>();//MonoSingleton.GetSingleton("GameVariables").GetComponent<GameVariables>();
             }
             if(song == null)
             {
-                song = MonoSingleton.GetSingleton("Playing Song").GetComponent<Song>();
+                song = MSingleton.GetSingleton<Song>(); //MonoSingleton.GetSingleton("Playing Song").GetComponent<Song>();
             }
             trail = songController.noteTrails[noteEntry.trailIndex];
             UpdateNote(0);
@@ -62,6 +62,14 @@ namespace Song
             
 
         }
+        private void SetRotation()
+        {
+            if ((noteEntry.parentNote != null && noteEntry.parentNote.GetNoteType() == NoteEntry.NoteType.Slide) || noteEntry.GetNoteType() == NoteEntry.NoteType.Slide)
+            {
+                
+
+            }
+        }
         public void UpdateNote()
         {
             UpdateNote(song.GetTimeInSong());
@@ -74,7 +82,7 @@ namespace Song
             Vector3 newPos =
                    trail.start.position
                    + Vector3.Normalize(trail.end.position - trail.start.position)
-                   * (timeInSong - noteEntry.startTime)
+                   * (timeInSong - noteEntry.startTime + songController.GetNoteTime())
                    * (Vector3.Distance(trail.start.position, trail.end.position))
                    / (songController.GetNoteTime());
 
@@ -83,6 +91,7 @@ namespace Song
                 newPos += GetSlideNotePosition();
 
             }
+            newPos.z -= .5f;
             transform.position = newPos;
             //set transparency
             float transparency = Vector3.Distance(newPos, trail.start.position) / songController.GetNoteTransparenctFadeTime();
@@ -102,10 +111,18 @@ namespace Song
             {
                // gameVars.UpdateScore(songController.GetNoteClickScoreChange());
                 Instantiate(trail.noteClickSFX, transform.position, Quaternion.identity);
+                gameVars.UpdateScoreNoteClick(noteEntry);
+                Debug.Log("Note clicked at " + song.GetTimeInSong() + ", but was supposed to be at " + noteEntry.startTime);
+
+                if(noteEntry.globalColor != null)
+                {
+
+                }
             }
             else
             {
-               // gameVars.UpdateScore(songController.GetNoteFailScoreChange());
+                // gameVars.UpdateScore(songController.GetNoteFailScoreChange());
+                gameVars.UpdateScoreNoteFail(noteEntry);
             }
             Destroy(gameObject);
         }
@@ -142,8 +159,9 @@ namespace Song
                // Debug.Log("Note " + noteInScreen.ToString());
             if (Vector2.Distance(noteInScreen, input) < 100)
             {
+              //  Debug.Log("Mouse " + input.ToString() + "  Note " + noteInScreen.ToString() + "  Dist " + Vector2.Distance(noteInScreen, input));
                 return true;
-                Debug.Log("Mouse " + input.ToString() + "  Note " + noteInScreen.ToString() + "  Dist " + Vector2.Distance(noteInScreen, input));
+               
 
             }
 

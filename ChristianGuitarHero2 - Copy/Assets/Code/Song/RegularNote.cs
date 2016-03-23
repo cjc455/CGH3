@@ -21,7 +21,7 @@ namespace Song
             {
                 note.DestroyNote(false);
             }
-            if (Input.GetKeyDown(note.GetTrail().keyCode) && note.InTrailClickBounds() && note.InTouchInputBounds())
+            if (Input.GetMouseButtonDown(0) && note.InTrailClickBounds() && note.InTouchInputBounds())
             {
                 note.DestroyNote(true);
             }

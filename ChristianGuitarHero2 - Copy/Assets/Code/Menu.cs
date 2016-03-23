@@ -21,7 +21,8 @@ public class Menu : MonoBehaviour {
 	void Start () {
         if(gameStateController == null)
         {
-            gameStateController = MonoSingleton.GetSingleton("GameState").GetComponent<GameStateController>();
+           // gameStateController = MonoSingleton.GetSingleton("GameState").GetComponent<GameStateController>();
+            gameStateController = MSingleton.GetSingleton<GameStateController>();
         }
         EndMenu();
         gameState.AddGameStateMessage(GameStateEventMessage.Start, StartMenu);

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿/*
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -6,6 +7,7 @@ public class MonoSingleton
 {
     static Dictionary<string, GameObject> singletons = null;
     
+
     static private void Initialize()
     {
         singletons = new Dictionary<string, GameObject>();
@@ -48,5 +50,6 @@ public class MonoSingleton
         return newObj;
     }
     */
-    
+/*    
 }
+*/

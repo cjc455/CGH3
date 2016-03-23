@@ -41,7 +41,7 @@ namespace Song
         void Start()
         {
             audioSource = GetComponent<AudioSource>();
-            GameStateController gameStateController = MonoSingleton.GetSingleton("GameState").GetComponent<GameStateController>();
+            GameStateController gameStateController = MSingleton.GetSingleton<GameStateController>();//MonoSingleton.GetSingleton("GameState").GetComponent<GameStateController>();
             GameState playing = gameStateController.GetGameState("Playing");
             gameStateController.AddGameStateMessage(playing, GameStateEventMessage.Start, CreateSongObject);
             gameStateController.AddGameStateMessage(playing, GameStateEventMessage.Update, UpdateSong);

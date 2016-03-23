@@ -32,7 +32,7 @@ public class GameStateController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        gameVars = MonoSingleton.GetSingleton("GameVariables").GetComponent<GameVariables>();
+        gameVars = MSingleton.GetSingleton<GameVariables>();//MonoSingleton.GetSingleton("GameVariables").GetComponent<GameVariables>();
         gameStates = GetComponentsInChildren<GameState>();
         SetGameState(initialGameState);
 
