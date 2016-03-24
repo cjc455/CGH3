@@ -42,15 +42,16 @@ namespace Song
         //NoteEntry ne = new SlideNoteEntry(time, points, noteDecoration);
         //Won't need getters for these, the gameObjects needed by them will be accessed inside the note class
         public Color localColor;
-        public Color globalColor;
-        public float audioLength;
-        public float audioSpeed;
+        public Color globalColor = Color.cyan;
+        public float audioLength = .2f;
+       // public float audioSpeed = 1;
         public float cameraShake;
         public float localTrailScale;
-        public float globalTrailScale;
+        public float globalTrailScale = 1;
+        public float audioMagnitude = 1;
         public float blurAmmount;
         const bool playOnClickedNotesOnly = true;
-
+        public float bloomAmmount = .25f;
 
         public NoteType GetNoteType() { return noteType; }
         public SlideNotePoint[] GetSlideNotePoints() { return slideNotePoints; }
@@ -236,8 +237,17 @@ namespace Song
         [SerializeField]
         AudioClip songClip;
 
-        
+        float desiredNoteTime;
+        float currentNoteTime;
 
+        public void SetDesiredNoteTime(float desiredNoteTime)
+        {
+            this.desiredNoteTime = desiredNoteTime;
+        }
+        public void SetScoreNoteTimeAdd(float value)
+        {
+
+        }
         const float noteTransparencyFadeTime = 3f;
         public string GetName() { return songName; }
         public int GetUIOrder() { return uiOrder;  }
@@ -245,6 +255,7 @@ namespace Song
         public string GetArtist() { return songArtist;  }
         public float GetTimeInSong() { return Time.time - songStartTime; }
         List<NoteEntry> noteEntries;
+        List<NoteEntry> songDecorations;
         //Next note that will be instansiated
         NoteEntry nextNoteEntry;
         //Only keep track of instansiated notes . . .

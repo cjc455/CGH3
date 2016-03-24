@@ -8,7 +8,7 @@ namespace Song
         NoteEntry noteEntry;
         Trail trail;
         static SongController songController;
-        static GameVariables gameVars;
+        static GameVariables gameVars;j
         static Song song;
         void Start()
         {
@@ -111,18 +111,25 @@ namespace Song
             {
                // gameVars.UpdateScore(songController.GetNoteClickScoreChange());
                 Instantiate(trail.noteClickSFX, transform.position, Quaternion.identity);
-                gameVars.UpdateScoreNoteClick(noteEntry);
+                //  gameVars.UpdateScoreNoteClick(noteEntry);
+                MSingleton.GetSingleton<GameScore>().NoteClick();
                 Debug.Log("Note clicked at " + song.GetTimeInSong() + ", but was supposed to be at " + noteEntry.startTime);
 
                 if(noteEntry.globalColor != null)
                 {
-
+                    MSingleton.GetSingleton<SongSFX>().GlobalLight(noteEntry);
                 }
+                if (noteEntry.globalTrailScale != 0)
+                {
+                    MSingleton.GetSingleton<SongSFX>().GlobalScale(noteEntry);
+                }
+                MSingleton.GetSingleton<SongSFX>().Bloom(noteEntry);
             }
             else
             {
+                MSingleton.GetSingleton<GameScore>().NoteFail();
                 // gameVars.UpdateScore(songController.GetNoteFailScoreChange());
-                gameVars.UpdateScoreNoteFail(noteEntry);
+                //gameVars.UpdateScoreNoteFail(noteEntry);
             }
             Destroy(gameObject);
         }
