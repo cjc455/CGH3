@@ -5,10 +5,10 @@ namespace Song
 {
     public class Note : MonoBehaviour
     {
-        NoteEntry noteEntry;
+        public NoteEntry noteEntry;
         Trail trail;
         static SongController songController;
-        static GameVariables gameVars;j
+        static GameVariables gameVars;
         static Song song;
         void Start()
         {
@@ -26,13 +26,16 @@ namespace Song
             }
             trail = songController.noteTrails[noteEntry.trailIndex];
             UpdateNote(0);
+            OnStartNote();
         }
+
         public Trail GetTrail()
         {
             return trail;
         }
         public void SetNoteEntry(NoteEntry noteEntry)
         {
+            Debug.Log("Set NOte Entry");
             this.noteEntry = noteEntry;
         }
         public NoteEntry GetNoteEntry()
@@ -41,11 +44,11 @@ namespace Song
         }
         void Update()
         {
-           // float timeInSong = song.GetTimeInSong();
-           // Debug.Log(timeInSong);
-           // UpdateNote(timeInSong);
 
         }
+        protected virtual void OnUpdateNote() { }
+        protected virtual void OnStartNote() { }
+
         public Vector3 GetSlideNotePosition()
         {
             Vector3 direction = Vector3.zero;
@@ -113,17 +116,9 @@ namespace Song
                 Instantiate(trail.noteClickSFX, transform.position, Quaternion.identity);
                 //  gameVars.UpdateScoreNoteClick(noteEntry);
                 MSingleton.GetSingleton<GameScore>().NoteClick();
-                Debug.Log("Note clicked at " + song.GetTimeInSong() + ", but was supposed to be at " + noteEntry.startTime);
+                //Debug.Log("Note clicked at " + song.GetTimeInSong() + ", but was supposed to be at " + noteEntry.startTime);
 
-                if(noteEntry.globalColor != null)
-                {
-                    MSingleton.GetSingleton<SongSFX>().GlobalLight(noteEntry);
-                }
-                if (noteEntry.globalTrailScale != 0)
-                {
-                    MSingleton.GetSingleton<SongSFX>().GlobalScale(noteEntry);
-                }
-                MSingleton.GetSingleton<SongSFX>().Bloom(noteEntry);
+                noteEntry.ApplyDecoration();
             }
             else
             {
@@ -135,7 +130,18 @@ namespace Song
         }
         public bool OutOfSongBounds()
         {
-            if (transform.position.y  <= trail.end.position.y - songController.GetNoteFailRange())
+            if(songController.noteTrails == null)
+            {
+                Debug.Log("Trail Null");
+            }
+            if(transform == null)
+            {
+                Debug.Log("Song controller is null");
+            }
+            if(this.gameObject == null) { Debug.Log("Gameobject null."); }
+
+
+            if (transform.position.y  <= songController.noteTrails[noteEntry.trailIndex].end.position.y - songController.GetNoteFailRange())
             {
                 return true;
             }

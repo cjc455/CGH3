@@ -1,23 +1,25 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using System;
 
 namespace Song
 {
     public class RegularNote : MonoBehaviour
     {
+
         Note note;
+ 
         // Use this for initialization
         void Start()
         {
-            note = GetComponent<Note>();
+            note = transform.GetComponent<Note>();
         }
 
-        // Update is called once per frame
+
         void Update()
         {
             note.UpdateNote();
-            if(note.OutOfSongBounds())
+            if (note.OutOfSongBounds())
             {
                 note.DestroyNote(false);
             }
@@ -25,7 +27,7 @@ namespace Song
             {
                 note.DestroyNote(true);
             }
-
         }
+
     }
 }

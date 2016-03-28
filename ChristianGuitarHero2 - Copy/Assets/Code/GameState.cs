@@ -3,13 +3,24 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+public class GameStateEventData
+{
+    public GameObject gameObject;
+    public GameStateEvent gameStateEvent;
+    
+    public GameStateEventData(GameObject gameObject, GameStateEvent gameStateEvent)
+    {
+        this.gameStateEvent = gameStateEvent;
+        this.gameObject = gameObject;
+    }
+}
 
 public class GameState : MonoBehaviour {
 
     
    
 
-    Dictionary<GameStateEventMessage, List<GameStateEvent>> gameStateEvents = null;
+    Dictionary<GameStateEventMessage, List<GameStateEventData>> gameStateEvents = null;
    
     float gameStateStartTime;
 
@@ -22,7 +33,7 @@ public class GameState : MonoBehaviour {
     {
        
         InitializeGameStateEvents();
-        AddGameStateMessage(GameStateEventMessage.Start, InitializeGameState);
+        AddGameStateMessage(GameStateEventMessage.Start, new GameStateEventData(this.gameObject, InitializeGameState));
         //  gameStateController = MonoSingleton.GetSingleton("GameState").GetComponent<GameStateController>();
         gameStateController = MSingleton.GetSingleton<GameStateController>();
     }
@@ -32,11 +43,11 @@ public class GameState : MonoBehaviour {
     }
     private void InitializeGameStateEvents()
     {
-        gameStateEvents = new Dictionary<GameStateEventMessage, List<GameStateEvent>>();
+        gameStateEvents = new Dictionary<GameStateEventMessage, List<GameStateEventData>>();
         foreach (GameStateEventMessage message in Enum.GetValues(typeof(GameStateEventMessage)))
         {
             // Debug.Log("Hi" + message.ToString() + gameStateName);
-            gameStateEvents.Add(message, new List<GameStateEvent>());
+            gameStateEvents.Add(message, new List<GameStateEventData>());
         }
     }
     public void SendMessageToGameStateEvents(GameStateEventMessage message)
@@ -45,38 +56,37 @@ public class GameState : MonoBehaviour {
         {
             InitializeGameStateEvents();
         }
-        List<GameStateEvent> selectedEvents;
+        List<GameStateEventData> selectedEvents;
         gameStateEvents.TryGetValue(message, out selectedEvents);
         if(selectedEvents == null)
         {
             Debug.LogError("Message returned null List<GameStateEvent>");
         }
-
-        foreach(GameStateEvent gse in selectedEvents)
+        for(int i = 0; i < selectedEvents.Count; i++)
         {
-            gse();
+            if (selectedEvents[i].gameObject == null)
+            {
+                selectedEvents.RemoveAt(i);
+
+            }
+            else
+            {
+                selectedEvents[i].gameStateEvent();
+            }
         }
+       
         
     }
 
-    public void AddGameStateMessage(GameStateEventMessage message, GameStateEvent gameStateEvent)
+    public void AddGameStateMessage(GameStateEventMessage message, GameStateEventData gameStateEventData)
     {
         
         if (gameStateEvents == null)
         {
             InitializeGameStateEvents();
         }
-        /*
-        List<GameStateEvent> selectedEvents = new List<GameStateEvent>();
-        gameStateEvents.TryGetValue(message, out selectedEvents);
-        if (selectedEvents == null)
-        {
-            Debug.LogError("Message returned null List<GameStateEvent>");
-        }
-        selectedEvents.Add(gameStateEvent);
-        gameStateEvents[message] = selectedEvents;
-        */
-        gameStateEvents[message].Add(gameStateEvent);
+        
+        gameStateEvents[message].Add(gameStateEventData);
         if(gameStateController == null)
         {
             gameStateController = MSingleton.GetSingleton<GameStateController>();//MonoSingleton.GetSingleton("GameState").GetComponent<GameStateController>();
@@ -87,12 +97,12 @@ public class GameState : MonoBehaviour {
             {
                 if(gameStateController.GetActiveGameState() == this)
                 {
-                    gameStateEvent();
+                    gameStateEventData.gameStateEvent();
                 }
             }
             else if (gameStateController.initialGameState == this)
             {
-                gameStateEvent();
+                gameStateEventData.gameStateEvent();
             }
            // Debug.Log("Called " + gameStateEvent + " " + name);
         }

@@ -10,8 +10,8 @@ namespace Song
         public Trail[] noteTrails;
         public GameObject transitionNote;
         public Song[] songs;
-        [SerializeField]
-        float noteTime = .5f;
+   //     [SerializeField]
+     //   float noteTime = .5f;
         [SerializeField]
         float noteClickRange = .5f;
         [SerializeField]
@@ -28,8 +28,9 @@ namespace Song
         AudioSource audioSource;
 
         private Song currentSong;
+        private SongDifficulty songDifficulty;
         Song songType;
-        public float GetNoteTime(){ return noteTime; }
+        public float GetNoteTime(){ return songDifficulty.GetNoteTime(); }
         public float GetNoteClickRange() { return noteClickRange;}
 
         public float GetNoteFailScoreChange() { return noteFailScoreChange; }
@@ -43,12 +44,16 @@ namespace Song
             audioSource = GetComponent<AudioSource>();
             GameStateController gameStateController = MSingleton.GetSingleton<GameStateController>();//MonoSingleton.GetSingleton("GameState").GetComponent<GameStateController>();
             GameState playing = gameStateController.GetGameState("Playing");
-            gameStateController.AddGameStateMessage(playing, GameStateEventMessage.Start, CreateSongObject);
-            gameStateController.AddGameStateMessage(playing, GameStateEventMessage.Update, UpdateSong);
-            gameStateController.AddGameStateMessage(playing, GameStateEventMessage.Exit, EndSong);
-            GameState mainMenu = gameStateController.GetGameState("Main Menu");
-            gameStateController.AddGameStateMessage(mainMenu, GameStateEventMessage.Start, DestroySongObject);
+            playing.AddGameStateMessage(GameStateEventMessage.Start, new GameStateEventData(this.gameObject, CreateSongObject));
+            playing.AddGameStateMessage(GameStateEventMessage.Update, new GameStateEventData(this.gameObject, UpdateSong));
+          //  playing.AddGameStateMessage(GameStateEventMessage.Exit, new GameStateEventData(this.gameObject, EndSong));
 
+            GameState mainMenu = gameStateController.GetGameState("Main Menu");
+            mainMenu.AddGameStateMessage(GameStateEventMessage.Start, new GameStateEventData(this.gameObject, DestroySongObject));
+
+            GameState pause = gameStateController.GetGameState("Pause");
+            pause.AddGameStateMessage(GameStateEventMessage.Start, new GameStateEventData(this.gameObject, PauseSong));
+            pause.AddGameStateMessage(GameStateEventMessage.Exit, new GameStateEventData(this.gameObject, UnpauseSong));
             songType = songs[0];
             
             
@@ -62,10 +67,7 @@ namespace Song
 
             currentSong.UpdateSong();
         }
-        private void SetSong()
-        {
 
-        }
         public void SetSong(Song songType)
         {
             if(songType == null) {
@@ -76,7 +78,14 @@ namespace Song
 
             this.songType = songType;
         }
-        
+        public void SetSongDifficulty(SongDifficulty songDifficulty)
+        {
+            this.songDifficulty = songDifficulty;
+        }
+        public void ActivateSong()
+        {
+            CreateSongObject();
+        }
         void CreateSongObject()
         {
             if (songType == null)
@@ -86,6 +95,7 @@ namespace Song
                 return;
             }
 
+            
             currentSong = Instantiate(songType);
             currentSong.StartSong();
             currentSong.name = "Playing Song";
@@ -94,12 +104,17 @@ namespace Song
         }
         void PlaySong()
         {
+            
             audioSource.Play();
            
         }
         void PauseSong()
         {
             audioSource.Pause();
+        }
+        void UnpauseSong()
+        {
+            PlaySong();
         }
         void StopSong()
         {

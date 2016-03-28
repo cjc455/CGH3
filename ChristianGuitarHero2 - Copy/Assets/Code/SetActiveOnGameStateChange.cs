@@ -11,7 +11,7 @@ public class SetActiveOnGameStateChange : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-        gameState.AddGameStateMessage(message, SetOnChange);
+        gameState.AddGameStateMessage(message, new GameStateEventData(this.gameObject, SetOnChange));
     }
 
     void SetOnChange()

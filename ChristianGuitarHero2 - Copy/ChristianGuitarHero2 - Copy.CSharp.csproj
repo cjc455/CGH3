@@ -113,7 +113,6 @@
     <Compile Include="Assets\Code\MonoSingleton.cs" />
     <Compile Include="Assets\Code\NotePressSFX.cs" />
     <Compile Include="Assets\Code\PlayingScoreUI.cs" />
-    <Compile Include="Assets\Code\ScrollSnapRect.cs" />
     <Compile Include="Assets\Code\SetActiveOnGameStateChange.cs" />
     <Compile Include="Assets\Code\Song\LongNote.cs" />
     <Compile Include="Assets\Code\Song\LongNoteController.cs" />
@@ -130,7 +129,7 @@
     <Compile Include="Assets\Code\Song\TransitionNote.cs" />
     <Compile Include="Assets\Code\SongListUI.cs" />
     <Compile Include="Assets\Code\SongPannelUI.cs" />
-    <Compile Include="Assets\Code\SongSFX.cs" />
+    <Compile Include="Assets\Code\SongSFXController.cs" />
     <Compile Include="Assets\GemExample\Scripts\DemoTimeOfDay.cs" />
     <Compile Include="Assets\GemExample\Scripts\Orbit.cs" />
     <Compile Include="Assets\Purchaser.cs" />

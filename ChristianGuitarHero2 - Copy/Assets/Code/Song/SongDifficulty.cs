@@ -4,6 +4,9 @@ using System.Collections;
 public class SongDifficulty : MonoBehaviour {
 
     [SerializeField]
+    string difficultyName;
+
+    [SerializeField]
     float noteTime;
 
     [SerializeField]
@@ -12,9 +15,9 @@ public class SongDifficulty : MonoBehaviour {
     [SerializeField]
     float noteTimeIncreaseRate = 1;
     
-    public string GetText()
+    public string GetDifficultyName()
     {
-        return name;
+        return difficultyName;
     }
     public float GetScoreMultilier()
     {

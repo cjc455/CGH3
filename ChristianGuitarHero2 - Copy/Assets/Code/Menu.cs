@@ -25,8 +25,8 @@ public class Menu : MonoBehaviour {
             gameStateController = MSingleton.GetSingleton<GameStateController>();
         }
         EndMenu();
-        gameState.AddGameStateMessage(GameStateEventMessage.Start, StartMenu);
-        gameState.AddGameStateMessage(GameStateEventMessage.Exit, EndMenu);
+        gameState.AddGameStateMessage(GameStateEventMessage.Start, new GameStateEventData(this.gameObject, StartMenu));
+        gameState.AddGameStateMessage(GameStateEventMessage.Exit, new GameStateEventData(this.gameObject, EndMenu));
         if(!rectTransform)
         {
             rectTransform = GetComponent<RectTransform>();

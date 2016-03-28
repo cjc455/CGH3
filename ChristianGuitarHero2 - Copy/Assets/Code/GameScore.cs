@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 using Song;
 
 public class GameScore : MonoBehaviour {
 
-    public Text scoreValueText;
-    public Text scoreMultiplierText;
-    public Text scoreStreakText;
+    public List<Text> scoreValueText;
+    public List<Text> scoreMultiplierText;
+    public List<Text> scoreStreakText;
 
     float currentScore = 0;
     SongDifficulty songDifficulty;
@@ -44,16 +45,20 @@ public class GameScore : MonoBehaviour {
 
     private void SetText()
     {
+        
         SetText(scoreMultiplierText, GetMultiplier().ToString());
         SetText(scoreValueText, currentScore.ToString());
         SetText(scoreStreakText, currentNoteStreak.ToString());
     }
-    private void SetText(Text t, string val)
+    private void SetText(List<Text> texts, string val)
     {
-        if (t)
+        foreach (Text t in texts)
         {
-            t.text = val;
+            if (t)
+            {
+                t.text = val;
 
+            }
         }
     }
 	// Use this for initialization

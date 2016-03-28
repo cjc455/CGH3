@@ -27,13 +27,11 @@ namespace Song
         [SerializeField]
         private RectTransform contentRect;
 
-        [SerializeField]
-        ScrollSnapRect snapRect;
 
         SongController songController;
-        GameState playingGameState;
+        GameState selectDifficultyGameState;
         GameStateController gameStateController;
-
+        Song[] songs;
         // Use this for initialization
         void Start()
         {
@@ -44,20 +42,18 @@ namespace Song
 
             gameStateController = MSingleton.GetSingleton<GameStateController>();
 
-            playingGameState = gameStateController.GetGameState("Playing");
+            selectDifficultyGameState = gameStateController.GetGameState("Difficulty Select");
+            selectDifficultyGameState.AddGameStateMessage(GameStateEventMessage.Start, new GameStateEventData(this.gameObject, SetSong));
 
-
-            Song[] songs = songController.songs;
+            songs = songController.songs;
             Button[] buttons = new Button[songs.Length];
 
-            
-            foreach (Song s in songs)
+            for (int i = 0; i < songs.Length; i++)
             {
-                CreateButton(s);
+                CreateButton(songs[i]);
             }
+            
 
-            if (snapRect != null)
-                snapRect.Initialize();
             if (contentRect != null)
                 contentRect.sizeDelta = new Vector2(contentRect.sizeDelta.x, songs.Length * buttonDistance);
             Debug.Log(songs.Length);
@@ -86,25 +82,39 @@ namespace Song
 
             titleText.text = songResource.GetName();
             artistText.text = songResource.GetArtist();
-            difficultyText.text = songResource.GetDifficulty().ToString();
+
+            //Old code. Now, display difficulty on difficulty selection gamestate
+           // difficultyText.text = songResource.GetDifficulty().ToString();
 
             //button listener code taken from
             //http://answers.unity3d.com/questions/791573/46-ui-how-to-apply-onclick-handler-for-button-gene.html
 
             
-            AddSongListener(button, songResource); // Using the iterator as argument will capture the variable
-            AddStateChangeListener(button);
+          //  AddSongListener(button, songResource); // Using the iterator as argument will capture the variable
+          //  AddStateChangeListener(button);
         }
 
         private void AddStateChangeListener(Button b)
         {
-            b.onClick.AddListener(() => gameStateController.SetGameState(playingGameState));
+            b.onClick.AddListener(() => gameStateController.SetGameState(selectDifficultyGameState));
         }
         private void AddSongListener(Button b, Song songResource)
         {
             
             b.onClick.AddListener(() => songController.SetSong(songResource));
         }
-
+        [SerializeField]
+        Transform toggleParent;
+        private void SetSong()
+        {
+            Toggle[] toggles = toggleParent.GetComponentsInChildren<Toggle>();
+            for(int i = 0; i < toggles.Length; i++)
+            {
+                if(toggles[i].isOn)
+                {
+                    songController.SetSong(songs[i]);
+                }
+            }
+        }
     }
 }

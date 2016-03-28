@@ -4,12 +4,6 @@ using System.Collections.Generic;
 
 namespace Song
 {
-    public enum SongDifficulty
-    {
-        Easy,
-        Medium,
-        Hard
-    }
     public class SlideNotePoint
     {
         float time;
@@ -41,18 +35,20 @@ namespace Song
 
         //NoteEntry ne = new SlideNoteEntry(time, points, noteDecoration);
         //Won't need getters for these, the gameObjects needed by them will be accessed inside the note class
+
+
         public Color localColor;
         public Color globalColor = Color.cyan;
         public float audioLength = .2f;
        // public float audioSpeed = 1;
         public float cameraShake;
         public float localTrailScale;
-        public float globalTrailScale = 1;
+        public float globalTrailScale = .05f;
         public float audioMagnitude = 1;
         public float blurAmmount;
         const bool playOnClickedNotesOnly = true;
         public float bloomAmmount = .25f;
-
+        float twirlAmmount = 5;
         public NoteType GetNoteType() { return noteType; }
         public SlideNotePoint[] GetSlideNotePoints() { return slideNotePoints; }
       //  public List<TransitionNote> transitionNotes;
@@ -117,6 +113,11 @@ namespace Song
             return newNoteEntry;
 
         }
+        public static NoteEntry Empty(float startTime)
+        {
+            NoteEntry newNoteEntry = new NoteEntry(startTime, NoteType.Empty);
+            return newNoteEntry;
+        }
         /*
         TODO: only make the notes based on the pitch in the song
         public static NoteEntry[] Slide(float startTime, float length, float minTrailPos, float maxTrailPos)
@@ -124,6 +125,55 @@ namespace Song
 
         }
         */
+        public bool InSong()
+        {
+            float offset = 0;
+            if(noteType != NoteType.Empty)
+            {
+                offset = MSingleton.GetSingleton<SongController>().GetNoteTime();
+            }
+            bool result = (startTime - offset <= MSingleton.GetSingleton<Song>().GetTimeInSong());
+
+            if(result && noteType == NoteType.Empty)
+            {
+                ApplyDecoration();
+            }
+            return result;
+        }
+        List<SongSFX> sfx = new List<SongSFX>();
+        public void ApplyDecoration()
+        {
+            Debug.Log("Apply decoration for " + noteType.ToString());
+            /*
+            if (globalColor != null)
+            {
+                MSingleton.GetSingleton<SongSFX>().GlobalLight(this);
+            }
+            if (globalTrailScale != 0)
+            {
+                MSingleton.GetSingleton<SongSFX>().GlobalScale(this);
+            }
+            MSingleton.GetSingleton<SongSFX>().Bloom(this);
+            */
+           
+
+            if (sfxValues != null)
+            {
+                foreach (SongSFXValue v in sfxValues)
+                {
+                    MSingleton.GetSingleton<SongSFXController>().AddSFX(v);
+                }
+            }
+        }
+        List<SongSFXValue> sfxValues;
+        public void AddSFX( SongSFXValue value)
+        {
+            if(sfxValues == null)
+            {
+                sfxValues = new List<SongSFXValue>();
+            }
+            sfxValues.Add(value);
+        }
         public static NoteEntry[] Slide(float startTime, SlideNotePoint[] points)
         {
             if(points == null)
@@ -176,6 +226,7 @@ namespace Song
         All data for the note is created in one of the above methods
         This method just instansiates it. Not much need for data setting/manipulation
         */
+        GameState playingGameState;
         public void InstansiateNote()
         {
             
@@ -188,6 +239,7 @@ namespace Song
                     gameObject = Object.Instantiate(GetSongController().noteTrails[trailIndex].noteObject);
                     gameObject.AddComponent<RegularNote>();
                     gameObject.transform.parent = GetSongController().transform;
+                    
                     break;
                 case NoteType.Long:
                     gameObject = Object.Instantiate(GetSongController().noteTrails[trailIndex].longNoteEndObject);
@@ -208,11 +260,14 @@ namespace Song
                     break;
             }
 
-            gameObject.name = noteType.ToString();
-            gameObject.transform.position = GetSongController().noteTrails[trailIndex].start.position;
-            
-            Note newNote = gameObject.AddComponent<Note>();
-            newNote.SetNoteEntry(this);
+            if (noteType != NoteType.Empty)
+            {
+                gameObject.name = noteType.ToString();
+                gameObject.transform.position = GetSongController().noteTrails[trailIndex].start.position;
+
+                Note newNote = gameObject.AddComponent<Note>();
+                newNote.SetNoteEntry(this);
+            }
             //  Debug.Log("Note Created");
 
 
@@ -253,7 +308,8 @@ namespace Song
         public int GetUIOrder() { return uiOrder;  }
         public SongDifficulty GetDifficulty() { return songDifficulty;  }
         public string GetArtist() { return songArtist;  }
-        public float GetTimeInSong() { return Time.time - songStartTime; }
+        private float timeInSong = 0;
+        public float GetTimeInSong() { return timeInSong; }
         List<NoteEntry> noteEntries;
         List<NoteEntry> songDecorations;
         //Next note that will be instansiated
@@ -274,6 +330,7 @@ namespace Song
         }
         private List<NoteEntry> GetSong2NoteEntries()
         {
+            
             List<NoteEntry> n = new List<NoteEntry>();
             n.Add(NoteEntry.Regular(0, 2));
             n.Add(NoteEntry.Regular(1, 1));
@@ -296,18 +353,34 @@ namespace Song
         {
            
             List<NoteEntry> n = new List<NoteEntry>();
-            float totalTime = 0;
-            for(int i = 0; i < 400; i++)
+            
+            for(int i = 0; i < 1; i++)
             {
-               // n.Add(NoteEntry.Regular(i * .1f + 2f, i % 3));
-
-               if(i % 3 == 0)
+                // n.Add(NoteEntry.Regular(i * .1f + 2f, i % 3));
+              //  NoteEntry newNoteEntry = NoteEntry.Regular(i * 2f, i % 3);
+                //newNoteEntry.AddSFX(SongSFXValue.FactoryInstant(SongSFXType.Bloom, SongSFXValue.MathFunction.Sine, i * 2f, -.25f, 5f));
+              //  n.Add(newNoteEntry);
+                
+                if (i % 4 == 0)
                 {
-                    n.Add(NoteEntry.Regular(i * 2f, i % 3));
+                    NoteEntry newNoteEntry = NoteEntry.Regular(1 * 2f, i % 3);
+                    newNoteEntry.AddSFX(SongSFXValue.FactoryInstant(SongSFXType.Bloom, SongSFXValue.MathFunction.Constant, i * 2f, -.25f, 2f));
+                    n.Add(newNoteEntry);
+
                 }
-               else if(i % 3 == 1)
+               else if(i % 4 == 1)
                 {
                     n.AddRange(NoteEntry.Long(i * 2f, i % 3, 1f));
+                }
+               else if (i % 4 == 2)
+                {
+                    
+                    NoteEntry impactEffect = NoteEntry.Empty(i * 2f);
+                    impactEffect.AddSFX(SongSFXValue.FactoryInstant(SongSFXType.GlobalTrailScale, SongSFXValue.MathFunction.Sine, i * 2f, .2f, .25f));
+                    impactEffect.AddSFX(SongSFXValue.FactoryInstant(SongSFXType.Bloom, SongSFXValue.MathFunction.Sine, i * 2f, -.2f, .25f));
+                    n.Add(impactEffect);
+
+
                 }
                else
                 {
@@ -346,15 +419,18 @@ namespace Song
                    / (songController.GetNoteTime());
 
         */
+        const float endTimeLength = 3;
+        float endTime = 0;
+        bool finished = false;
         public void UpdateSong()
         {
-
+            timeInSong += Time.deltaTime;
            // Debug.Log("Update Song");
             if (nextNoteEntry == null) { Debug.Log("Null"); }
-           // else { Debug.Log(nextNoteEntry.startTime.ToString()); }
+            // else { Debug.Log(nextNoteEntry.startTime.ToString()); }
+            //nextNoteEntry.InSong() { nextNoteEntry.startTime - songController.GetNoteTime() <= GetTimeInSong() }
             
-            
-            while(nextNoteEntry != null && nextNoteEntry.startTime - songController.GetNoteTime() <= GetTimeInSong()) 
+            while (nextNoteEntry != null && nextNoteEntry.InSong()) 
             {
 
                 nextNoteEntry.InstansiateNote();
@@ -367,11 +443,27 @@ namespace Song
                 else
                 {
                     nextNoteEntry = null;
+                    finished = true;
+                    
                 }
 
             }
- 
-
+            if(endTime == 0)
+            {
+                if(songController.GetComponentsInChildren<Note>().Length == 0 && finished)
+                {
+                    endTime = GetTimeInSong();
+                }
+            }
+            else if(GetTimeInSong() >= endTime + endTimeLength)
+            {
+                Debug.Log("Hi");
+                if (finished)
+                {
+                    Debug.Log("yo");
+                    MSingleton.GetSingleton<GameStateController>().SetGameState("Song Finish");
+                }
+            }
             //Any notes failed?
         }
         public void StartSong()
@@ -379,13 +471,14 @@ namespace Song
             gameVars = MSingleton.GetSingleton<GameVariables>(); //MonoSingleton.GetSingleton("GameVariables").GetComponent<GameVariables>();
             songController = MSingleton.GetSingleton<SongController>();// MonoSingleton.GetSingleton("Song").GetComponent<SongController>();
             trails = songController.noteTrails;
-
+            songStartTime = Time.time;
+            timeInSong = 0;
             //TODO: throw error if notes are not ordered by accending startTime
             noteEntries = GetSong1NoteEntries();
 
             Debug.Log("Start song");
             nextNoteEntry = noteEntries[0];
-            songStartTime = Time.time;
+            
 
             AudioSource audioSource = songController.GetComponent<AudioSource>();
             audioSource.clip = songClip;

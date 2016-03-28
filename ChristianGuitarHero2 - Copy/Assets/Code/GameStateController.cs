@@ -66,16 +66,11 @@ public class GameStateController : MonoBehaviour {
         return newGameState;
     }
     
-    public void AddGameStateMessage(GameState gameState, GameStateEventMessage message, GameStateEvent gameStateEvent)
-    {
-
-        gameState.AddGameStateMessage(message, gameStateEvent);
-    }
-    public void AddGameStateMessage(GameState[] gameStates, GameStateEventMessage message, GameStateEvent gameStateEvent)
+    public void AddGameStateMessage(GameState[] gameStates, GameStateEventMessage message, GameStateEventData gameStateEventData)
     {
         foreach(GameState s in gameStates)
         {
-            AddGameStateMessage(s, message, gameStateEvent);
+            s.AddGameStateMessage(message, gameStateEventData);
         }
         
     }

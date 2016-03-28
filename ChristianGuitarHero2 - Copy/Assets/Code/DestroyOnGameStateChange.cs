@@ -9,7 +9,7 @@ public class DestroyOnGameStateChange : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        gameState.AddGameStateMessage(message, DestroyOnChange);
+        gameState.AddGameStateMessage(message, new GameStateEventData(objectsToDestroy[0], DestroyOnChange));
 	}
 	
 	void DestroyOnChange()
