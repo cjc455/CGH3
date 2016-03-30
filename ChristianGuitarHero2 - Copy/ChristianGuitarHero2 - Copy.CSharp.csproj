@@ -101,6 +101,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\CarouselToggle\CarouselRotator.cs" />
+    <Compile Include="Assets\CarouselToggle\CarouselToggler.cs" />
+    <Compile Include="Assets\CarouselToggle\Examples\Counter\ButtonControl.cs" />
+    <Compile Include="Assets\CarouselToggle\Examples\Slots\SlotsControl.cs" />
     <Compile Include="Assets\Code\Curver.cs" />
     <Compile Include="Assets\Code\CurverTest.cs" />
     <Compile Include="Assets\Code\DestroyOnGameStateChange.cs" />
@@ -127,6 +131,7 @@
     <Compile Include="Assets\Code\Song\Trail.cs" />
     <Compile Include="Assets\Code\Song\Trails.cs" />
     <Compile Include="Assets\Code\Song\TransitionNote.cs" />
+    <Compile Include="Assets\Code\SongGUI.cs" />
     <Compile Include="Assets\Code\SongListUI.cs" />
     <Compile Include="Assets\Code\SongPannelUI.cs" />
     <Compile Include="Assets\Code\SongSFXController.cs" />
@@ -144,6 +149,7 @@
     <Compile Include="Assets\VolumetricLines\Scripts\VolumetricMultiLineBehavior.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\CarouselToggle\tutorial.txt" />
     <None Include="Assets\Gem\Shaders\Gem.shader" />
     <None Include="Assets\Standard Assets\Cameras\CameraGuidelines.txt" />
     <None Include="Assets\Standard Assets\CrossPlatformInput\CrossPlatformInputGuidelines.txt" />

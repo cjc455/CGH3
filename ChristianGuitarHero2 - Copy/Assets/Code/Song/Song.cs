@@ -209,14 +209,35 @@ namespace Song
             NoteEntry[] newNoteEntries = new NoteEntry[numberOfEntries];
             newNoteEntries[0] = newNoteEntry;
             float entriesPerDistance = 15;
-            for (int i = 1; i < newNoteEntries.Length; i++)
+            for (int i = 1; i < newNoteEntries.Length - 1; i++)
             {
-               // float transitionNoteStartTime = startTime + positions[i - 1].y;
-                float transitionNoteStartTime = startTime + i * (length) / entriesPerDistance;
-                newNoteEntries[i] = Transition(transitionNoteStartTime, 0, newNoteEntries[0]);
-                newNoteEntries[i].slidePosition = positions[i - 1].x;
+                // float transitionNoteStartTime = startTime + positions[i - 1].y;
                 
+                 float transitionNoteStartTime = startTime + i * (length) / entriesPerDistance;
+                 newNoteEntries[i] = Transition(transitionNoteStartTime, 0, newNoteEntries[0]);
+                 newNoteEntries[i].slidePosition = positions[i - 1].x;
+                 
+
+                /*
+
+                d = sqrt ( x2 + y2 )
+                we know y, find x
+
+                x = sqrt( d2 - y2 )
+
+                */
+
+                /*
+                float transitionNoteStartTime = startTime + i * (length) / entriesPerDistance;
+                float d = Vector3.Distance(positions[i - 1], positions[i]);
+                float y = transitionNoteStartTime;
                
+
+                float transitionNoteStartX = Mathf.Sqrt(Mathf.Pow(d, 2) - Mathf.Pow(y, 2));
+                newNoteEntries[i] = Transition(transitionNoteStartTime, 0, newNoteEntries[0]);
+                newNoteEntries[i].slidePosition = transitionNoteStartX;
+                */
+
             }
 
             return newNoteEntries;
@@ -292,9 +313,20 @@ namespace Song
         [SerializeField]
         AudioClip songClip;
 
+        [SerializeField]
+        float previewStartTime;
+
         float desiredNoteTime;
         float currentNoteTime;
 
+        public AudioClip GetSongClip()
+        {
+            return songClip;
+        }
+        public float GetPreviewStartTime()
+        {
+            return previewStartTime;
+        }
         public void SetDesiredNoteTime(float desiredNoteTime)
         {
             this.desiredNoteTime = desiredNoteTime;
@@ -354,13 +386,16 @@ namespace Song
            
             List<NoteEntry> n = new List<NoteEntry>();
             
-            for(int i = 0; i < 1; i++)
+            for(int i = 0; i < 400; i++)
             {
+                //     Debug.Log("1");
                 // n.Add(NoteEntry.Regular(i * .1f + 2f, i % 3));
-              //  NoteEntry newNoteEntry = NoteEntry.Regular(i * 2f, i % 3);
+                //  NoteEntry newNoteEntry = NoteEntry.Regular(i * 2f, i % 3);
                 //newNoteEntry.AddSFX(SongSFXValue.FactoryInstant(SongSFXType.Bloom, SongSFXValue.MathFunction.Sine, i * 2f, -.25f, 5f));
-              //  n.Add(newNoteEntry);
-                
+                //  n.Add(newNoteEntry);
+                NoteEntry newNoteEntry2 = NoteEntry.Regular(1 * 2f, i % 3);
+                newNoteEntry2.AddSFX(SongSFXValue.FactoryInstant(SongSFXType.Bloom, SongSFXValue.MathFunction.Constant, i * 2f, -.55f, 2f));
+                n.Add(newNoteEntry2);
                 if (i % 4 == 0)
                 {
                     NoteEntry newNoteEntry = NoteEntry.Regular(1 * 2f, i % 3);
@@ -384,7 +419,7 @@ namespace Song
                 }
                else
                 {
-                    SlideNotePoint[] points = new SlideNotePoint[3];
+                    SlideNotePoint[] points = new SlideNotePoint[7];
                     for( float j = 0; j < points.Length; j++) {
                         points[(int)j] = new SlideNotePoint(j * 2 / points.Length, Random.Range(0f, 1f) * 2f);
                     }
@@ -489,7 +524,7 @@ namespace Song
         }
         public void PauseSong()
         {
-
+            
         }
         /*
         private int GetNumberOfInstansiatedNotes()

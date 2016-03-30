@@ -24,12 +24,17 @@ namespace Song
         float noteTransparencyFadeTime = 2;
         [SerializeField]
         float noteYTransitionEnd = 0;
+        [SerializeField]
+        float noteViewportClickRange = 25;
 
+        public float GetNoteViewportClickRange() { return noteViewportClickRange; }
         AudioSource audioSource;
 
         private Song currentSong;
         private SongDifficulty songDifficulty;
+        [SerializeField]
         Song songType;
+
         public float GetNoteTime(){ return songDifficulty.GetNoteTime(); }
         public float GetNoteClickRange() { return noteClickRange;}
 
@@ -38,22 +43,38 @@ namespace Song
         public float GetNoteTransparenctFadeTime() { return noteTransparencyFadeTime; }
         public float GetNoteFailRange() { return noteFailRange; }
         public float GetNoteYTransitionEnd() { return noteYTransitionEnd;  }
+        public Song GetActiveSong()
+        {
+            return currentSong;
+        }
+        public Song GetActiveSongType()
+        {
+            return songType;
+        }
         // Use this for initialization
         void Start()
         {
             audioSource = GetComponent<AudioSource>();
             GameStateController gameStateController = MSingleton.GetSingleton<GameStateController>();//MonoSingleton.GetSingleton("GameState").GetComponent<GameStateController>();
             GameState playing = gameStateController.GetGameState("Playing");
-            playing.AddGameStateMessage(GameStateEventMessage.Start, new GameStateEventData(this.gameObject, CreateSongObject));
+            GameState mainMenu = gameStateController.GetGameState("Main Menu");
+            GameState pause = gameStateController.GetGameState("Pause");
+            GameState songList = gameStateController.GetGameState("Song List");
+            GameState songFinish = gameStateController.GetGameState("Song Finish");
+            GameState difficultyState = gameStateController.GetGameState("Difficulty Select");
+
+            difficultyState.AddGameStateMessage(GameStateEventMessage.Exit, new GameStateEventData(this.gameObject, CreateSongObject));
             playing.AddGameStateMessage(GameStateEventMessage.Update, new GameStateEventData(this.gameObject, UpdateSong));
           //  playing.AddGameStateMessage(GameStateEventMessage.Exit, new GameStateEventData(this.gameObject, EndSong));
 
-            GameState mainMenu = gameStateController.GetGameState("Main Menu");
+            
             mainMenu.AddGameStateMessage(GameStateEventMessage.Start, new GameStateEventData(this.gameObject, DestroySongObject));
+            songList.AddGameStateMessage(GameStateEventMessage.Start, new GameStateEventData(this.gameObject, DestroySongObject));
 
-            GameState pause = gameStateController.GetGameState("Pause");
             pause.AddGameStateMessage(GameStateEventMessage.Start, new GameStateEventData(this.gameObject, PauseSong));
             pause.AddGameStateMessage(GameStateEventMessage.Exit, new GameStateEventData(this.gameObject, UnpauseSong));
+
+            songFinish.AddGameStateMessage(GameStateEventMessage.Start, new GameStateEventData(this.gameObject, StopSong));
             songType = songs[0];
             
             
@@ -68,7 +89,7 @@ namespace Song
             currentSong.UpdateSong();
         }
 
-        public void SetSong(Song songType)
+        public void SetSongType(Song songType)
         {
             if(songType == null) {
                 Debug.LogError("songType is null.");
@@ -94,7 +115,11 @@ namespace Song
                 songType = null;
                 return;
             }
-
+            if(currentSong != null)
+            {
+                StopSong();
+                DestroySongObject();
+            }
             
             currentSong = Instantiate(songType);
             currentSong.StartSong();
@@ -130,6 +155,7 @@ namespace Song
                 currentSong.StopSong();
                 Destroy(currentSong.gameObject);
             }
+            StopSong();
         }
         // Update is called once per frame
         void Update()

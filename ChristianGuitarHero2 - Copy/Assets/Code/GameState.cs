@@ -7,11 +7,24 @@ public class GameStateEventData
 {
     public GameObject gameObject;
     public GameStateEvent gameStateEvent;
-    
+
+    bool dependantOnPrevious = false;
+    public GameState previousGameState;
+
     public GameStateEventData(GameObject gameObject, GameStateEvent gameStateEvent)
     {
         this.gameStateEvent = gameStateEvent;
         this.gameObject = gameObject;
+        previousGameState = null;
+    }
+    public GameStateEventData(GameObject gameObject, GameStateEvent gameStateEvent, GameState previousGameState) : this(gameObject, gameStateEvent)
+    {
+        this.previousGameState = previousGameState;
+        dependantOnPrevious = true;
+    }
+    public bool GetDepOnPrevious()
+    {
+        return dependantOnPrevious;
     }
 }
 
@@ -50,7 +63,7 @@ public class GameState : MonoBehaviour {
             gameStateEvents.Add(message, new List<GameStateEventData>());
         }
     }
-    public void SendMessageToGameStateEvents(GameStateEventMessage message)
+    public void SendMessageToGameStateEvents(GameStateEventMessage message, GameState previousGameState)
     {
         if(gameStateEvents == null)
         {
@@ -71,6 +84,13 @@ public class GameState : MonoBehaviour {
             }
             else
             {
+                if (selectedEvents[i].GetDepOnPrevious())
+                {
+                    if (selectedEvents[i].previousGameState != previousGameState)
+                    {
+                        continue;
+                    }
+                }
                 selectedEvents[i].gameStateEvent();
             }
         }

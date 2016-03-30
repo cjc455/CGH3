@@ -31,6 +31,13 @@ namespace Song {
             {
                 tn.GetComponent<Note>().UpdateNote();
                 
+                
+            }
+            for(int i = 1; i < GetTransitionNotes().Length; i++)
+            {
+               // Vector3 scale = GetTransitionNotes()[i].transform.localScale;
+              //  scale.z = Vector3.Distance(GetTransitionNotes()[i].transform.position, GetTransitionNotes()[i - 1].transform.position);
+               // GetTransitionNotes()[i].transform.localScale = scale;
             }
             if (longNote.GetNoteEntry().GetNoteType() == NoteEntry.NoteType.Slide)
             {

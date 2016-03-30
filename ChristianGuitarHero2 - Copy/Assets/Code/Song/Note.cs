@@ -10,6 +10,7 @@ namespace Song
         static SongController songController;
         static GameVariables gameVars;
         static Song song;
+        float instansiationTime = 0;
         void Start()
         {
             if(songController == null)
@@ -27,6 +28,7 @@ namespace Song
             trail = songController.noteTrails[noteEntry.trailIndex];
             UpdateNote(0);
             OnStartNote();
+            instansiationTime = song.GetTimeInSong();
         }
 
         public Trail GetTrail()
@@ -97,7 +99,13 @@ namespace Song
             newPos.z -= .5f;
             transform.position = newPos;
             //set transparency
-            float transparency = Vector3.Distance(newPos, trail.start.position) / songController.GetNoteTransparenctFadeTime();
+            //  float transparency = Vector3.Distance(newPos, trail.start.position) / songController.GetNoteTransparenctFadeTime();
+            float transparency = (song.GetTimeInSong() - instansiationTime) / songController.GetNoteTransparenctFadeTime();
+            if (noteEntry.GetNoteType() == NoteEntry.NoteType.Transition)
+            {
+                //Debug.Log(transparency);
+            }
+            
             transparency = Mathf.Clamp(transparency, 0f, 1f);
             Color color = GetComponent<Renderer>().material.color;
             color.a = transparency;
@@ -168,9 +176,9 @@ namespace Song
         {
             Vector2 input = Input.mousePosition;
             Vector2 noteInScreen = Camera.main.WorldToScreenPoint(transform.position);
-
+            float tolerance = songController.GetNoteViewportClickRange();
                // Debug.Log("Note " + noteInScreen.ToString());
-            if (Vector2.Distance(noteInScreen, input) < 100)
+            if (Vector2.Distance(noteInScreen, input) < tolerance)
             {
               //  Debug.Log("Mouse " + input.ToString() + "  Note " + noteInScreen.ToString() + "  Dist " + Vector2.Distance(noteInScreen, input));
                 return true;

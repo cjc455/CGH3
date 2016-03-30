@@ -27,6 +27,7 @@ public class GameStateController : MonoBehaviour {
     */
     public GameState initialGameState;
     GameState activeGameState = null;
+    GameState previousGameState = null;
     GameState[] gameStates;
     GameVariables gameVars;
 
@@ -40,13 +41,13 @@ public class GameStateController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        activeGameState.SendMessageToGameStateEvents(GameStateEventMessage.Update);
+        activeGameState.SendMessageToGameStateEvents(GameStateEventMessage.Update, previousGameState);
        // Debug.Log(GetActiveGameState().GetName());
         foreach(GameState state in gameStates)
         {
             if(state != activeGameState)
             {
-                state.SendMessageToGameStateEvents(GameStateEventMessage.UpdateSleep);
+                state.SendMessageToGameStateEvents(GameStateEventMessage.UpdateSleep, previousGameState);
             }
         }
     }
@@ -83,7 +84,7 @@ public class GameStateController : MonoBehaviour {
         //Send message to "old" gamestate
         if(activeGameState != null)
         {
-            activeGameState.SendMessageToGameStateEvents(GameStateEventMessage.Exit);
+            activeGameState.SendMessageToGameStateEvents(GameStateEventMessage.Exit, previousGameState);
         }
 
         GameState newGameState = Array.Find(gameStates, s => s.GetName() == gameStateName);
@@ -96,8 +97,12 @@ public class GameStateController : MonoBehaviour {
             
         }
         activeGameState = newGameState;
-        activeGameState.SendMessageToGameStateEvents(GameStateEventMessage.Start);
-       
+        activeGameState.SendMessageToGameStateEvents(GameStateEventMessage.Start, previousGameState);
+
+        previousGameState = activeGameState;
+        
+        
+        
     }
    
 
